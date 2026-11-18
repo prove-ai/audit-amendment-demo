@@ -109,7 +109,7 @@ function trustNums(){ const a=aiActs(), need=a.filter(x=>x.rev.ok!==null), ch=SU
   return {a,ai:a.filter(x=>x.k==='ai').length-1+SUG.length,calc:a.filter(x=>x.k==='calc').length,done:need.filter(x=>x.rev.ok).length,need:need.length,wait:need.filter(x=>!x.rev.ok).length,
     doubt:SUG.filter(s=>s.conf!=='high').length+1,ch}; }
 function trustBar(){ const n=trustNums();
-  return `<div class="trustbar"><span class="assist">✦ AI Record</span><span>${n.ai} items drafted by AI · ${n.calc} calculated by rule · <b>${n.done} of ${n.need}</b> automated steps reviewed by a named person${n.wait?` · ${n.wait} waiting`:''}</span><a ${go(S.role,'trust')}>See how each one was made and checked</a></div>`; }
+  return `<div class="trustbar"><span class="assist">✦ AI Record</span><span>${n.ai} items drafted by AI · ${n.calc} calculated by rule · <b>${n.done} of ${n.need}</b> automated steps reviewed by a named person${n.wait?` · ${n.wait} waiting`:''}</span><a ${go(S.role,'trust')}>Audit</a></div>`; }
 function actModal(a){ const sec=(l,b)=>`<div class="sec"><label>${l}</label>${b}</div>`;
   $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:720px"><h2>${a.id} ${kindPill(a.k)}<a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
     <h3>${a.t}</h3><div class="muted">${KIND[a.k][1]}</div>

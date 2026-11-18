@@ -285,7 +285,7 @@ function chrome(body){
   const on=sc||r==='edc'?0:r==='sponsor'?3:10, tabGo={0:()=>nav('edc'),3:()=>nav('sponsor'),10:()=>nav('cro')};
   const navb=`<div class="nav">${items.map((x,i)=>`<span style="cursor:pointer" class="${i===on?'on':''}" ${sc?'':h(tabGo[i]||(()=>toast(x.replace(' ▾','')+' is outside this demo. Data Entry, Studio and Tools are live.')))}>${x}</span>`).join('')}</div>`;
   const crumbs=sc?'':`<div class="crumbs"><a ${h(openStudies)}>⌂ My Studies</a><span class="sep">›</span><a ${h(openStudy)}>CTJ301UC201 ▾</a><span class="sep">›</span><span>${r==='sponsor'?'CTJ301UC201_DEV1':r==='edc'?S.edc.site+' · Data Entry':'CTJ301UC201'}</span>
-    <div class="right">${r!=='edc'&&S.pg[r]!=='trust'?`<a ${go(r,'trust')}>See how each one was made and checked</a>`:''}</div></div>`;
+    <div class="right">${r!=='edc'&&S.pg[r]!=='trust'?`<a ${go(r,'trust')}>Audit</a>`:''}</div></div>`;
   return `${demobar}<div class="ws ${sc?'sc':''}">${top}${navb}${crumbs}<div class="layout">${side()}<main>${body}</main></div></div>`;
 }
 function side(){
