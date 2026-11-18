@@ -278,8 +278,8 @@ function chrome(body){
   const demobar=`<div class="demobar">${[['home','⌂ Home'],['sponsor','1 Sponsor'],['cro','2 CRO'],['site','3 Site']].map(x=>`<button class="${r===x[0]&&!(r==='home'&&S.home==='signin')?'on':''}" ${go(x[0])}>${x[1]}</button>`).join('')}
     <button ${h(()=>{nav('home',null,{home:'signin'});})} class="${r==='home'&&S.home==='signin'?'on':''}">Log in</button>${tourCtl()}<span class="sp"></span><button ${h(openPacket)}>Inspection Packet</button><button ${h(()=>openPdf(44))}>Protocol PDF</button><button ${h(()=>{location.hash='';location.reload();return false;})}>Reset demo</button></div>`;
   if(r==='home') return demobar+body;
-  const top=`<div class="topbar"><div class="logo">${sc?'Vault Clinical<i>|</i><small>Site Connect</small>':''}</div>
-    <div class="search"><div class="sel">${sc?'All':'Subjects'} <span>▾</span></div><input id="q" placeholder="Search sites, subjects, people, changes, protocol…" autocomplete="off"><span class="mag">⌕</span><div id="res"></div></div>
+  const top=`<div class="topbar">${sc?'<div class="logo">Vault Clinical<i>|</i><small>Site Connect</small></div>':''}
+    <div class="search${sc?'':' left'}"><div class="sel">${sc?'All':'Subjects'} <span>▾</span></div><input id="q" placeholder="Search sites, subjects, people, changes, protocol…" autocomplete="off"><span class="mag">⌕</span><div id="res"></div></div>
     <div class="who">${m.n} · ${m.o} <div class="avatar">${m.i}</div><a style="color:#b9c2d8;font-size:12px" ${h(()=>{log('User signed out');nav('home');})}>Log out</a></div></div>`;
   const items=sc?['Site Connect ▾']:['Data Entry','Review ▾','Assessments','Studio ▾','Coder','Reports','Dashboards','Loader','Labs','Randomization','Tools ▾','My Training','Workbench'];
   const on=sc||r==='edc'?0:r==='sponsor'?3:10, tabGo={0:()=>nav('edc'),3:()=>nav('sponsor'),10:()=>nav('cro')};
