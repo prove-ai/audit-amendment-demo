@@ -7,8 +7,8 @@ const prosCons=k=>({pros:MATRIX.filter(r=>r[1][k][0]==='ok').map(r=>[r[0],r[1][k
 /* ================= Schedule: current vs each proposal ================= */
 function vSchedule(){
   const k=S.schedK||S.design||'A', D=DESIGNS[k], v1=S.view==='v1', pc=prosCons(k), v=VERD[D.verdict], lock=!!S.signed, chosen=S.design===k;
-  const seg=`<div class="seg"><button class="${v1?'on':''}" ${h(()=>{S.view='v1'})}>Version 1 (current)</button>${Object.keys(DESIGNS).map(o=>`<button class="${!v1&&k===o?'on':''}" ${h(()=>{S.view='v2';S.schedK=o})}>Proposal ${o}${DESIGNS[o].verdict==='rec'?' ★':''}${S.design===o?' (chosen)':''}</button>`).join('')}</div>`;
-  const panel=v1?`<div class="note blue"><div>This is the schedule sites are collecting on today. Pick a proposal above to see how the amendment would change it. ★ marks the recommended proposal.</div></div>`
+  const seg=`<div class="seg"><button class="${v1?'on':''}" ${h(()=>{S.view='v1'})}>Version 1 (current)</button>${Object.keys(DESIGNS).map(o=>`<button class="${!v1&&k===o?'on':''}" ${h(()=>{S.view='v2';S.schedK=o})}>Proposal ${o}${S.design===o?' (chosen)':''}</button>`).join('')}</div>`;
+  const panel=v1?`<div class="note blue"><div>This is the schedule sites are collecting on today. Pick a proposal above to see how the amendment would change it.</div></div>`
    :`<div class="card prop v-${D.verdict}"><h2>Proposal ${k} · ${D.name} <span class="pill ${v[0]}">${v[1]}</span>${chosen?'<span class="dstat accepted" style="margin-left:auto">Chosen for version 2</span>':''}</h2><div class="bd">
       <p style="margin:0 0 10px">${D.verdictWhy}</p>
       <div class="pc2"><div><label>In its favour</label><ul>${pc.pros.map(p=>`<li>${icon('ok')}<span><b>${p[0]}.</b> ${p[1]}</span></li>`).join('')||'<li class="muted">Nothing stands out.</li>'}</ul></div>

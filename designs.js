@@ -109,7 +109,7 @@ function vOptions(){ const lock=!!S.signed, cur=S.design, mk={ok:'ok',mid:'warn'
       :`<button class="btn ${d.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose option ${k}</button>`}</div></div>`;};
   return `${lock?`<div class="note green">${icon('ok')}<div>Casebook version 2 was approved with <b>Option ${cur}</b>. The choice is locked.</div></div>`:''}
   <div class="opts4">${Object.keys(DESIGNS).map(card).join('')}</div>
-  <div class="card"><h2>How the options compare</h2><div class="bd" style="padding:0"><table class="v map"><tr><th style="width:21%">What matters</th>${Object.keys(DESIGNS).map(k=>`<th class="${cur===k?'cur':''}">Option ${k}${DESIGNS[k].verdict==='rec'?' ★':''}</th>`).join('')}</tr>
+  <div class="card"><h2>How the options compare</h2><div class="bd" style="padding:0"><table class="v map"><tr><th style="width:21%">What matters</th>${Object.keys(DESIGNS).map(k=>`<th class="${cur===k?'cur':''}">Option ${k}</th>`).join('')}</tr>
     ${MATRIX.map(r=>`<tr><td>${r[0]}</td>${Object.keys(DESIGNS).map(k=>`<td class="${cur===k?'cur':''}">${icon(mk[r[1][k][0]])} ${r[1][k][1]}</td>`).join('')}</tr>`).join('')}</table></div></div>
   <div class="card"><h2>Why Option A, and why not the others</h2><div class="bd"><ul class="clean plain">${Object.keys(DESIGNS).map(k=>`<li>${icon({rec:'ok',ok:'warn',no:'bad'}[DESIGNS[k].verdict])}<div><b>Option ${k} · ${VERD[DESIGNS[k].verdict][1]}.</b> ${DESIGNS[k].verdictWhy}</div></li>`).join('')}</ul></div></div>
   ${lock?'':`<div class="decide" style="border-top:0;padding-top:0">
