@@ -424,7 +424,7 @@ function vAssist(){
     <div class="card" style="margin-top:14px"><h2>Checked, no change proposed</h2><div class="bd"><ul class="clean">${NOCHANGE.map(n=>`<li>${icon('ok')}<div><b>${n[0]}</b><br><span class="muted">${n[1]}</span></div></li>`).join('')}</ul></div></div>
   </div>
   <div class="card detail"><h2>${s.id} ${confPill(s.conf)} <span class="dstat ${d}" style="margin-left:auto">${decTxt(d)}</span></h2><div class="bd">
-    <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type} · <span class="assist">✦ Suggested by Audit</span></div>
+    <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type} · <span class="assist">Suggested by Audit</span></div>
     <div class="sec"><label>Proposed change</label><div class="ba"><div><small>Casebook v1 (current)</small>${s.before}</div><i>→</i><div class="after"><small>Casebook v2 (proposed)</small>${s.after}</div></div>${s.rule?`<pre class="rule">${s.rule}</pre>`:''}</div>
     <div class="sec"><label>Protocol evidence</label>${evidence(s)}</div>
     <div class="sec"><label>Why this is suggested</label>${s.why}</div>${trustBrief(s)}${who}${opts}

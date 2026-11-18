@@ -46,7 +46,7 @@ function askAnswer(q,ctx){ const t=q.toLowerCase(), has=(...w)=>w.some(x=>t.incl
 }
 function ask(q,ctx){ q=q.trim(); if(!q) return false; const r=askAnswer(q,ctx); S.chat[ctx].push({q:esc(q),r}); log(`Question to Audit: “${q.slice(0,90)}”`,ctx==='site'?S.mySite:''); aiLog(`Answered a question (AI-10). Advice only, not reviewed by a person: “${String(r.a).replace(/<[^>]+>/g,'').slice(0,110)}…”`,ctx==='site'?S.mySite:'',r.src?{p:r.src}:null); }
 function askBox(ctx){ const l=S.chat[ctx];
-  return `<div class="card askbox"><h2><span class="assist">✦ Ask Audit</span> <span class="muted" style="font-weight:400;font-size:12px">Type a doubt in your own words. Answers come from the protocol and this study’s data.</span></h2><div class="bd">
+  return `<div class="card askbox"><h2><span class="assist">Ask Audit</span> <span class="muted" style="font-weight:400;font-size:12px">Type a doubt in your own words. Answers come from the protocol and this study’s data.</span></h2><div class="bd">
     ${l.map((m,i)=>`<div class="aq">${m.q}</div><div class="aa"><div class="aprov">${kindPill('ai')} Advice only. It changes nothing and no person has reviewed it${m.r.src?'; check the cited page':''}.</div>${m.r.a}${m.r.src?` <a ${h(()=>openPdf(m.r.src))}>Protocol p. ${m.r.src}</a>`:''}${m.r.b?`<div class="ab">${m.r.b.map(b=>`<button class="btn sm" ${h(()=>b.fn())}>${b.l}</button>`).join('')}</div>`:''}</div>`).join('')}
     <div class="chips">${ASK_CHIPS[ctx].map(c=>`<a ${h(()=>ask(c,ctx))}>${c}</a>`).join('')}</div>
     <div style="display:flex;gap:8px"><input id="askin_${ctx}" class="askin" placeholder="${ctx==='site'?'e.g. What do I do if a sample falls on Sunday?':'e.g. Our sites cannot add a Day 2 visit. What are the alternatives?'}">

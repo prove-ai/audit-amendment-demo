@@ -43,7 +43,7 @@ function tasksTable(s,edit){
 /* read-only card for a change, usable from any role */
 function changeCard(id){ const s=sug(id); if(!s) return toast(id+' belonged to a schema option that is no longer selected');
   $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:860px"><h2>${s.id} ${confPill(s.conf)} <span class="dstat ${S.dec[s.id]}">${decTxt(S.dec[s.id])}</span><a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
-    <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type} · <span class="assist">✦ Drafted by AI</span></div>
+    <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type} · <span class="assist">Drafted by AI</span></div>
     ${trustRecord(s)}</div></div></div>`; return false; }
 
 /* ================= Messages (site ⇄ CRO) ================= */
