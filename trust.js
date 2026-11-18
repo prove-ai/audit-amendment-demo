@@ -145,5 +145,5 @@ function vTrust(){ const n=trustNums(), f=S.tf||'all', sc=S.role==='site', kids=
       <div><b>CRO</b><p>Moves each site to the new version once that site’s ethics committee has approved the amended protocol, and follows up readiness.</p></div>
       <div><b>Site</b><p>Does not build the casebook. It applies the new version to its own participants, confirms it is ready and signs, or reports that it does not work.</p></div></div></div></div>`;
   const sub='Everything in this amendment that was produced automatically: what it was based on, how it was checked, what the assistant was unsure of, and which named person reviewed it.';
-  return sc?scPage([['✦ AI Record',null,1]],`<p class="lead" style="margin:0 0 12px">${sub}</p>${body}`):`<div class="ph"><div><h1>AI Record</h1><div class="sub">${sub}</div></div></div>${body}`;
+  return sc?scPage([['AI Record',null,1]],`<p class="lead" style="margin:0 0 12px">${sub}</p>${body}`):`<div class="ph"><div><h1>AI Record</h1><div class="sub">${sub}</div></div></div>${body}`;
 }

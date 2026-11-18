@@ -8,14 +8,14 @@ const prosCons=k=>({pros:MATRIX.filter(r=>r[1][k][0]==='ok').map(r=>[r[0],r[1][k
 function vSchedule(){
   const k=S.schedK||S.design||'A', D=DESIGNS[k], v1=S.view==='v1', pc=prosCons(k), v=VERD[D.verdict], lock=!!S.signed, chosen=S.design===k;
   const seg=`<div class="seg"><button class="${v1?'on':''}" ${h(()=>{S.view='v1'})}>Version 1 (current)</button>${Object.keys(DESIGNS).map(o=>`<button class="${!v1&&k===o?'on':''}" ${h(()=>{S.view='v2';S.schedK=o})}>Proposal ${o}${DESIGNS[o].verdict==='rec'?' ★':''}${S.design===o?' (chosen)':''}</button>`).join('')}</div>`;
-  const panel=v1?`<div class="note blue">ⓘ <div>This is the schedule sites are collecting on today. Pick a proposal above to see how the amendment would change it. ★ marks the recommended proposal.</div></div>`
+  const panel=v1?`<div class="note blue"><div>This is the schedule sites are collecting on today. Pick a proposal above to see how the amendment would change it. ★ marks the recommended proposal.</div></div>`
    :`<div class="card prop v-${D.verdict}"><h2>Proposal ${k} · ${D.name} <span class="pill ${v[0]}">${v[1]}</span>${chosen?'<span class="dstat accepted" style="margin-left:auto">Chosen for version 2</span>':''}</h2><div class="bd">
       <p style="margin:0 0 10px">${D.verdictWhy}</p>
       <div class="pc2"><div><label>In its favour</label><ul>${pc.pros.map(p=>`<li>${icon('ok')}<span><b>${p[0]}.</b> ${p[1]}</span></li>`).join('')||'<li class="muted">Nothing stands out.</li>'}</ul></div>
         <div><label>Against it</label><ul>${pc.cons.map(p=>`<li>${icon(p[2]==='bad'?'bad':'warn')}<span><b>${p[0]}.</b> ${p[1]}</span></li>`).join('')||'<li class="muted">No drawbacks identified.</li>'}</ul></div></div>
       <div class="decide" style="margin-top:10px">${chosen?`<button class="btn pri" ${go('sponsor','assist',{sTab:'changes'})}>Review its ${SUG.length} detailed changes ›</button>`:`<button class="btn ${D.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose Proposal ${k} for version 2</button>`}
         <a ${go('sponsor','assist',{sTab:'options'})}>Compare all four side by side ›</a>
-        <span class="legend" style="margin-left:auto"><span><span class="chk">●</span> Unchanged</span><span><span class="plus">+</span> Accepted</span><span><span class="plus pending">+</span> Proposed</span><span><span class="bolt">⚡</span> PK subgroup only</span><span><b style="color:#c0392b">?</b> Needs a decision</span></span></div></div></div>`;
+        <span class="legend" style="margin-left:auto"><span><span class="chk">●</span> Unchanged</span><span><span class="plus">+</span> Accepted</span><span><span class="plus pending">+</span> Proposed</span><span><b>PK</b> = created for the PK subgroup only</span><span><b style="color:#c0392b">?</b> Needs a decision</span></span></div></div></div>`;
   return `<div class="ph"><h1>Schedule</h1>${seg}</div>${panel}${scheduleGrid(k)}<div style="margin-top:16px">${askBox('sponsor')}</div>`;
 }
 
@@ -76,7 +76,7 @@ function handling(p){ const d=p.x.d, n=p.up.length, past=p.rows.length-n;
     :d<70?`Already past ${past} of the first-dose samples. Do not back-fill them. Collect the ${n} that remain, starting ${fdt(p.next.book)}.`
     :`Past the first-dose samples and ${past-3>0?(past-3)+' of the last-dose samples':'into the last-dose period'}. Collect the ${n} that remain, starting ${fdt(p.next.book)}.`; }
 function planTable(st,edit){ const pl=sitePlan(st);
-  if(!pl.aff.length) return `<div class="note blue">ⓘ <div>${pl.maybe?`No participant at this site needs a new plan today. ${pl.maybe} participant(s) in screening will get one automatically if they are assigned to the PK subgroup at randomisation.`:'No participant at this site is affected, so there is nothing to re-plan.'}</div></div>`;
+  if(!pl.aff.length) return `<div class="note blue"><div>${pl.maybe?`No participant at this site needs a new plan today. ${pl.maybe} participant(s) in screening will get one automatically if they are assigned to the PK subgroup at randomisation.`:'No participant at this site is affected, so there is nothing to re-plan.'}</div></div>`;
   return pl.aff.map(p=>{ const x=p.x, open=S.open['pl'+x.id]!==false, ok=S.plan[x.id];
     return `<div class="card plan"><h2 style="cursor:pointer" ${h(()=>{S.open['pl'+x.id]=!open})}>${open?'▾':'▸'} ${x.id} <span class="muted" style="font-weight:400">Study day ${x.d} · ${p.up.length} new sample(s) to schedule · next ${fdt(p.next.book)}</span>
         ${p.blocked?'<span class="pill dec">Blocked: consent v2.0 not signed</span>':''}${p.up.some(r=>r.fixed)?'<span class="pill med">Weekend sample</span>':''}
@@ -97,11 +97,11 @@ function planSummary(st){ const pl=sitePlan(st); return `<div class="tiles4">
   <div class="${pl.weekend?'w':''}"><b>${pl.weekend}</b><span>fall on a weekend${pl.fixed?` · ${pl.fixed} cannot move`:''}</span></div><div class="${pl.blocked?'b':''}"><b>${pl.blocked}</b><span>blocked until consent v2.0 is signed</span></div>
   <div><b>${pl.done} of ${pl.aff.length}</b><span>plans confirmed</span></div></div>`; }
 function vSitePlan(){ const st=site(S.mySite), pl=sitePlan(st), live=!!S.dep[st.id];
-  return scPage([['✦ Transition Plan',null,1]],`
+  return scPage([['Transition Plan',null,1]],`
     <div class="card"><h2>How version 2 maps onto your participants already in the trial</h2><div class="bd">
       <p style="margin:0 0 12px">Each participant is at a different point in the study, so the amended schedule lands differently for each of them. This plan works it out per participant, on real dates: what was planned before, what is planned now, what to book, and where to enter it. ${live?'':'<b>Version 2 is not active at your site yet, so this is a preview.</b>'}</p>
       ${planSummary(st)}
-      <div class="decide" style="margin-top:12px"><button class="btn" ${pl.aff.length?h(()=>planExport(st,'ics')):'disabled'}>⬇ Add to calendar (.ics)</button><button class="btn" ${pl.aff.length?h(()=>planExport(st,'csv')):'disabled'}>⬇ Export plan (CSV)</button>
+      <div class="decide" style="margin-top:12px"><button class="btn" ${pl.aff.length?h(()=>planExport(st,'ics')):'disabled'}>Add to calendar (.ics)</button><button class="btn" ${pl.aff.length?h(()=>planExport(st,'csv')):'disabled'}>Export plan (CSV)</button>
         ${pl.aff.length&&pl.done<pl.aff.length?`<button class="btn org" ${h(()=>{pl.aff.forEach(p=>{ if(!S.plan[p.x.id]) S.plan[p.x.id]={by:me().n,at:now()}; });log(`Transition plan confirmed for all ${pl.aff.length} affected participants`,st.id);})}>Confirm all plans</button>`:''}
         <a style="margin-left:auto" ${go('site','changes')}>Back to Amendment Changes ›</a></div></div></div>
     ${planTable(st,true)}${askBox('site')}`); }

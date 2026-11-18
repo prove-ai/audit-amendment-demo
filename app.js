@@ -301,9 +301,9 @@ function side(){
     <hr><h4>Site</h4>${SITES.map(q=>`<div class="it ${q.id===st.id?'on':''}" ${h(()=>{S.edc={site:q.id,sub:null,ev:null,prev:S.edc.prev}})}>${q.id}</div>`).join('')}</aside>`; }
   const s=site(S.mySite), dot=n=>n?'<span class="dot"></span>':'', si=(g,l,pg,d)=>`<div class="it ${p===pg?'on':''}" ${go('site',pg)}><u>${g}</u>${l}${d||''}</div>`;
   return `<aside><label>Study</label><select id="mysite">${SITES.map(x=>`<option value="${x.id}" ${x.id===s.id?'selected':''}>CTJ301UC201 &gt; Site ${x.id}</option>`).join('')}</select>
-    <div class="proto"><a ${h(()=>openDoc(s,siteDocs(s)[0]))}>▤ Study Protocol</a></div>
-    ${si('ⓘ','Study Information','info')}${si('⊞','System Links','links')}${si('☏','Study Contacts','contacts')}${si('✉','Communications','comms',dot(!S.ack[s.id]||unseen(s,true)))}
-    ${si('▤','Document Exchange','docs',dot(unread(s)||(S.dep[s.id]&&!tasksDone(s))))}${si('✦','Amendment Changes','changes',dot(!S.ack[s.id]))}${si('⇄','Transition Plan','plan',dot(!planDone(s)))}${si('◈','AI Record','trust')}${si('⚙','Study Admin','admin')}</aside>`;
+    <div class="proto"><a ${h(()=>openDoc(s,siteDocs(s)[0]))}>Study Protocol</a></div>
+    ${si('','Study Information','info')}${si('','System Links','links')}${si('','Study Contacts','contacts')}${si('','Communications','comms',dot(!S.ack[s.id]||unseen(s,true)))}
+    ${si('','Document Exchange','docs',dot(unread(s)||(S.dep[s.id]&&!tasksDone(s))))}${si('','Amendment Changes','changes',dot(!S.ack[s.id]))}${si('','Transition Plan','plan',dot(!planDone(s)))}${si('','AI Record','trust')}${si('','Study Admin','admin')}</aside>`;
 }
 
 /* ================= Shared pieces ================= */
@@ -343,7 +343,7 @@ function scheduleGrid(kk){
     <tr><th class="l">Name</th><th class="l">Label</th>${cols.map((e,i)=>`<td class="c ${nw(e)?stE(e):''}${gs(e,i)}" style="${nw(e)?'':'background:#ededed'}"></td>`).join('')}</tr>
     ${meta('Event group',(e,i)=>i===0||cols[i-1].grp!==e.grp?`<span style="white-space:nowrap;position:relative;z-index:1">${e.grp}</span>`:'')}
     ${meta('Study day',e=>e.d!==undefined?e.day:'')}${meta('Window (days)',win)}
-    ${v2&&D.kind!=='rows'?meta('Created for',e=>nw(e)?(pk?'<span class="bolt" title="Dynamic: PK subgroup only">⚡</span>PK':'All'):''):''}
+    ${v2&&D.kind!=='rows'?meta('Created for',e=>nw(e)?(pk?'<span title="Created for the PK subgroup only">PK</span>':'All'):''):''}
     ${body}</table></div>`;
 }
 function timeline(st,x){ const im=impact(st,x), addIds=im.add.map(e=>e.id), pastIds=im.past.map(e=>e.id), soonIds=im.soon.map(e=>e.id);
@@ -535,7 +535,7 @@ function vVersions(){ const t=S.vTab, seg=[['all','All Versions'],['sites','Acti
    hist:()=>`<table class="v"><tr><th>Type</th><th>Target Version</th><th>Sites</th><th>Apply Amendment to</th><th>User</th><th>Run</th></tr>${S.jobs.map(j=>`<tr><td>Prospective Amendment</td><td>2</td><td>${j.ids.join(', ')}</td><td>All Subjects (future events only)</td><td>${j.by}</td><td class="nw">${j.at}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">No amendments have been run for version 2 yet.</td></tr>'}</table>`}[t]();
   return `<div class="ph"><h1>Casebook Versions</h1><div class="seg">${seg.map(x=>`<button class="${t===x[0]?'on':''}" ${h(()=>{S.vTab=x[0]})}>${x[1]}</button>`).join('')}</div></div>${needSponsor()}${body}`; }
 const vJobs=()=>`<div class="ph"><h1>Job History</h1></div><table class="v"><tr><th>ID</th><th>Type</th><th>Status</th><th>User</th><th>Information</th><th>File and Log</th><th>Created</th></tr>
-  ${S.jobs.map((j,i)=>`<tr><td>${4120+S.jobs.length-i}</td><td>Prospective Amendment</td><td>${icon('ok')} Completed</td><td>${j.by}</td><td>Version 2 → ${j.ids.join(', ')}</td><td><a ${h(()=>download('amendment_job_'+(4120+S.jobs.length-i)+'.log',`Prospective amendment to casebook version 2\nSites: ${j.ids.join(', ')}\nStarted by: ${j.by} at ${j.at}\nSubjects moved: ${j.ids.reduce((n,id)=>n+site(id).subs.length,0)}\nData points altered: 0\nStatus: Completed`,'text/plain'))}>⬇ Log</a></td><td class="nw">${j.at}</td></tr>`).join('')||'<tr><td colspan="7" class="muted">No amendment jobs yet. Use Set Active Version on the Sites page.</td></tr>'}
+  ${S.jobs.map((j,i)=>`<tr><td>${4120+S.jobs.length-i}</td><td>Prospective Amendment</td><td>${icon('ok')} Completed</td><td>${j.by}</td><td>Version 2 → ${j.ids.join(', ')}</td><td><a ${h(()=>download('amendment_job_'+(4120+S.jobs.length-i)+'.log',`Prospective amendment to casebook version 2\nSites: ${j.ids.join(', ')}\nStarted by: ${j.by} at ${j.at}\nSubjects moved: ${j.ids.reduce((n,id)=>n+site(id).subs.length,0)}\nData points altered: 0\nStatus: Completed`,'text/plain'))}>Log</a></td><td class="nw">${j.at}</td></tr>`).join('')||'<tr><td colspan="7" class="muted">No amendment jobs yet. Use Set Active Version on the Sites page.</td></tr>'}
   <tr class="dim"><td>4120</td><td>Compare Single Casebook Versions</td><td>${icon('ok')} Completed</td><td>System</td><td>Version 1 vs 2</td><td><a ${h(openCompare)}>Open report</a></td><td class="nw">18 May 2017 08:02</td></tr></table>`;
 
 /* ================= Site (Site Connect) ================= */
@@ -545,7 +545,7 @@ function vSiteChanges(){
   const status=ackd?'<span class="pill solid">ACKNOWLEDGED</span>':dep?'<span class="pill med">ACTION NEEDED</span>':s.irb?'<span class="pill blue">COMING SOON</span>':'<span class="pill gray">ON HOLD · EC PENDING</span>';
   const short=!dep&&s.irb?`<div class="note">${icon('warn')}<div>Version 2 is not active at your site yet. ${S.signed?'The CRO has not activated it.':'The sponsor has not approved it.'} What you see below is a preview. <a ${h(fastDeploy)}>Demo shortcut: complete the sponsor and CRO steps</a></div></div>`:'';
   const hold=!s.irb?`<div class="note">${icon('warn')}<div>Your EC has not yet approved Protocol Ver. 1.1 (submitted ${s.sub}). Your site stays on casebook version 1 and nothing changes until approval is recorded.</div></div>`:'';
-  return scPage([['✦ Amendment Changes',null,1]],`
+  return scPage([['Amendment Changes',null,1]],`
     ${ackd?`<div class="note green">${icon('ok')}<div><b>Acknowledged.</b> ${ackd.by} · ${ackd.at}. The CRO and sponsor can see your acknowledgement.</div></div>`:short+hold}
     <div class="card"><h2>Protocol Ver. 1.1: what changes at ${s.id} ${status}</h2><div class="bd">
       <ul class="clean">${siteFacts(s).map(f=>`<li>${icon(f[0])}<div>${f[1]}</div></li>`).join('')}</ul>
@@ -574,10 +574,10 @@ function vSiteDocs(){ const s=site(S.mySite), t=S.dxTab, ts=siteTasks(s);
     <div class="card"><h2>Readiness tasks <span class="muted" style="font-weight:normal">— ${ts.filter(x=>x.st==='done').length} of ${ts.length} done · a task closes only with proof</span></h2><div class="bd" style="padding:4px 12px 8px">${tasksTable(s,true)}</div></div>`;
   const docs=`<div class="card"><div class="bd" style="padding:4px 12px 8px"><div class="bar" style="margin:8px 0"><button class="btn org" ${unread(s)?h(()=>{siteDocs(s).forEach(d=>S.read[s.id+d.id]=1);log('All documents marked as read',s.id);}):'disabled'}>Mark as Read</button><span class="muted">${unread(s)} unread</span></div>${docsTable(s)}</div></div><p class="muted">Opening a document marks it as read and records it in the audit trail.</p>`;
   return scPage([['Document Actions',()=>{S.dxTab='actions'},t==='actions'],['Documents',()=>{S.dxTab='documents'},t!=='actions']],t==='actions'?actions:docs); }
-const vSiteLinks=()=>{const s=site(S.mySite);return scPage([['⊞ System Links',null,1]],`<div class="card"><div class="bd" style="padding:4px 12px 8px"><table class="v"><tr><th>System Name</th><th>System Type</th><th>Description</th></tr>
+const vSiteLinks=()=>{const s=site(S.mySite);return scPage([['System Links',null,1]],`<div class="card"><div class="bd" style="padding:4px 12px 8px"><table class="v"><tr><th>System Name</th><th>System Type</th><th>Description</th></tr>
   ${[['Veeva EDC ↗','EDC','Enter casebook information here. New PK visits appear once version 2 is active.',openEdc(s.id)],['Study Training ↗','Training','Protocol Ver. 1.1: PK visits and sampling windows (section 6.2.5).',h(()=>openPdf(51))],['Protocol Ver. 1.1 ↗','eTMF','The amended protocol, full text.',h(()=>openDoc(s,siteDocs(s)[0]))],['RTSM ↗','RTSM / IRT','Randomisation and PK subgroup assignment.',h(()=>toast('RTSM is an external system and is not simulated in this demo'))]].map(r=>`<tr class="click" ${r[3]}><td><a>${r[0]}</a></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div></div>`);};
 const vSiteContacts=()=>scPage([['Sponsor/CRO Contacts',null,1]],`<div class="card"><div class="bd" style="padding:8px 12px">${contactsTable(site(S.mySite))}</div></div>`);
-const vSiteInfo=()=>{const s=site(S.mySite), g=CTG.study;return scPage([['ⓘ Study Information',null,1]],`<div class="card"><div class="bd"><dl class="kv">
+const vSiteInfo=()=>{const s=site(S.mySite), g=CTG.study;return scPage([['Study Information',null,1]],`<div class="card"><div class="bd"><dl class="kv">
   <dt>Study Number</dt><dd>${g.num} · <a href="https://clinicaltrials.gov/study/${g.nct}" target="_blank">${g.nct} ↗</a></dd><dt>Protocol Title</dt><dd>${g.title}</dd>
   <dt>Sponsor</dt><dd>${g.sponsor}</dd><dt>Study Phase</dt><dd>${g.phase}</dd><dt>Masking</dt><dd>${g.mask}</dd><dt>Indication</dt><dd>${g.cond}</dd>
   <dt>Current protocol</dt><dd>Ver. 1.1, 16 May 2017 <a ${h(()=>openDoc(s,siteDocs(s)[0]))}>open</a></dd>
@@ -602,7 +602,7 @@ document.addEventListener('change',e=>{ if(e.target.id==='a_sid'){S.auth.sid=e.t
 document.addEventListener('keydown',e=>{ if(e.key==='Enter'&&/^a_/.test(e.target.id||'')){ if(doAuth()!==false) render(); } });
 function openStudy(){ const g=CTG.study, cs=[...new Set(SITES.map(s=>s.ctry))];
   $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:760px"><h2>Study: ${g.num} <span class="pill gray">${g.nct}</span><a ${h(closeM)}>Close ✕</a></h2><div class="bd">
-    <div class="note blue">ⓘ <div>Study record from ClinicalTrials.gov, fetched ${CTG.fetched}. The amendment rollout shown in this demo (dates, staff, subjects, statuses) is simulated.</div></div>
+    <div class="note blue"><div>Study record from ClinicalTrials.gov, fetched ${CTG.fetched}. The amendment rollout shown in this demo (dates, staff, subjects, statuses) is simulated.</div></div>
     <dl class="kv"><dt>Official title</dt><dd>${g.title}</dd><dt>Sponsor</dt><dd>${g.sponsor}</dd><dt>Phase</dt><dd>${g.phase}</dd><dt>Indication</dt><dd>${g.cond}</dd><dt>Design</dt><dd>${g.mask}</dd>
     <dt>Arms</dt><dd>${g.arms.map(a=>`${a.label} (${a.type})`).join(' · ')}</dd><dt>Primary outcome</dt><dd>${g.primary}</dd><dt>Secondary outcomes</dt><dd>${g.secondary.join('<br>')}</dd>
     <dt>Eligibility age</dt><dd>${g.age}</dd><dt>Enrollment</dt><dd>${g.enroll} (actual)</dd><dt>Locations</dt><dd>${SITES.length} sites: ${cs.map(c=>`${c} ${SITES.filter(s=>s.ctry===c).length}`).join(', ')}</dd>

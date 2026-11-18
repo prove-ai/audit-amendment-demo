@@ -86,7 +86,7 @@ function vEdc(){
   const evRow=q=>{ const done=c.day===null?q.d===undefined&&x.d!=='SCR'&&!q.ps:(!q.ps&&(q.d===undefined||q.d<=c.day)), sv=Object.keys(S.form).filter(k=>k.startsWith(x.id+'|'+q.id+'|')).map(k=>S.form[k]);
     return `<tr class="click ${q.id===e.id?'sel':''}" ${h(()=>{S.edc.ev=q.id;S.edc.row=null})}><td class="nw">${sv.length?(sv.some(v=>v.q.length)?icon('bad'):icon('ok')):done&&!nw(q)?'<span class="chk">●</span>':'○'} <b>${q.ps?'PK':q.id}</b>${nw(q)?' <span class="new">NEW</span>':c.rows(q).length?` <span class="new" style="background:var(--green)">+${c.rows(q).length} rows</span>`:''}</td><td>${q.label}</td><td class="nw muted">${q.ps?'as needed':c.rand&&q.d!==undefined?fd(addDays(c.rand,q.d)):q.day||'—'}</td></tr>`; };
   let formBody;
-  if(c.rand===null) formBody=`<div class="note blue">ⓘ <div>This participant is in screening and not yet randomised. The new PK samples apply from randomisation, and only if they are assigned to the PK subgroup.</div></div>`;
+  if(c.rand===null) formBody=`<div class="note blue"><div>This participant is in screening and not yet randomised. The new PK samples apply from randomisation, and only if they are assigned to the PK subgroup.</div></div>`;
   else if(!forms.some(f=>f[0]==='PK')) formBody=`<div class="muted">Forms at this event are unchanged by the amendment: ${forms.map(f=>f[1]).join(', ')}.</div>`;
   else { const r=pkRef(t,c.rand), sv=S.form[fkey(x,e,t)], w=t===e?evWindow(e):null, newTp=st('codelist')!=='rejected';
     const tps=PKTPT.filter(p=>!p[2]||(c.v2&&newTp)), def=(PKTPT.find(p=>p[1]===r.hrs&&tps.includes(p))||[''])[0];
@@ -105,7 +105,7 @@ function vEdc(){
       <div class="acts">${S.dep[s.id]?'':`<div class="seg"><button class="${S.edc.prev?'':'on'}" ${h(()=>{S.edc.prev=false})}>Version 1 (live)</button><button class="${S.edc.prev?'on':''}" ${h(()=>{S.edc.prev=true})}>Preview version 2</button></div>`}
         <select id="edcsub" style="padding:4px">${s.subs.map(q=>`<option value="${q.id}" ${q.id===x.id?'selected':''}>${q.id}${q.pk===true?' (PK)':''}</option>`).join('')}</select></div></div>
     ${!S.dep[s.id]&&S.edc.prev?`<div class="note">${icon('warn')}<div>Preview only. Version 2 is not active at ${s.id}; nothing entered here would be saved in production.</div></div>`:''}
-    ${c.v2&&x.pk!==true&&pkOnly()&&x.d!=='SCR'?`<div class="note blue">ⓘ <div>This participant is not in the PK subgroup, so version 2 looks the same as version 1 for them.</div></div>`:''}
+    ${c.v2&&x.pk!==true&&pkOnly()&&x.d!=='SCR'?`<div class="note blue"><div>This participant is not in the PK subgroup, so version 2 looks the same as version 1 for them.</div></div>`:''}
     <div class="split" style="grid-template-columns:minmax(340px,.8fr) 1.4fr"><div><table class="v"><tr><th>Event</th><th>Label</th><th>Planned</th></tr>${c.evs.map(evRow).join('')}</table></div>
     <div class="card"><h2>${e.ps?'PK Sampling (unscheduled)':e.id+' · '+e.label} ${nw(e)?'<span class="new">NEW IN V2</span>':rows.length?'<span class="new" style="background:var(--green)">PK FORM NOW REPEATING</span>':''}${past&&e.tp?'<span class="pill gray">Already passed · not expected</span>':''}</h2><div class="bd">
       <div class="tabs" style="margin-bottom:12px">${forms.map(f=>`<button class="${f[0]==='PK'||!forms.some(g=>g[0]==='PK')&&f===forms[0]?'on':''}">${f[1]}</button>`).join('')}</div>${formBody}</div></div></div>`;
@@ -131,7 +131,7 @@ const OBJ={
 };
 function vObjects(k){ const o=OBJ[k];
   return `<div class="ph"><div><h1>${o.t}</h1><div class="sub">Version 1 objects with the changes proposed for version 2. Rows linked to a suggested change open it.</div></div><div class="acts"><button class="btn" ${go('sponsor','assist',{sTab:'changes'})}>Open Audit</button></div></div>
-  ${o.note?`<div class="note blue">ⓘ <div>${o.note}</div></div>`:''}
+  ${o.note?`<div class="note blue"><div>${o.note}</div></div>`:''}
   <table class="v"><tr>${o.h.map(x=>`<th>${x}</th>`).join('')}<th>Suggested change</th></tr>${o.rows().map(r=>`<tr class="${r[1]?'click':''}" ${r[1]?go('sponsor','assist',{sTab:'changes',sel:r[1]}):''}>${r[0].map(c=>`<td>${c}</td>`).join('')}<td class="nw">${r[1]?`<a>${r[1]}</a>`:'<span class="muted">—</span>'}</td></tr>`).join('')}</table>`; }
 const vCountries=()=>`<div class="ph"><h1>Study Countries</h1></div><table class="v"><tr><th>Country</th><th>Sites</th><th>EC approved Ver. 1.1</th><th>On version 2</th><th>PK subgroup</th></tr>
   ${[...new Set(SITES.map(s=>s.ctry))].map(c=>{const l=SITES.filter(s=>s.ctry===c);return `<tr><td><b>${c}</b></td><td>${l.map(s=>`<a ${go('cro','site',{croSite:s.id,siteTab:'overview'})}>${s.id}</a>`).join(', ')}</td><td>${l.filter(s=>s.irb).length} of ${l.length}</td><td>${l.filter(s=>S.dep[s.id]).length} of ${l.length}</td><td>${l[0].cn?'Yes – new PK visits apply':'No – data entry unchanged'}</td></tr>`}).join('')}</table>`;

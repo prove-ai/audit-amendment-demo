@@ -432,6 +432,52 @@ table.tr td{vertical-align:top}table.tr tr.kid td{background:#fcfcfc;font-size:1
 .aprov{font-size:11.5px;color:#666;margin-bottom:5px}
 .lp-steps.five{grid-template-columns:repeat(5,1fr);gap:16px}.lp-steps.five article{padding:20px}.lp-steps.five i{font-style:normal;width:30px;height:30px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;font-weight:700;margin-bottom:12px}
 .lp-steps.five h3{font-size:17px}.lp-steps.five p{margin:0;font-size:14px}
+/* ---------- polish: one typeface and one type scale across landing, sign-in and workspaces ---------- */
+body,button,input,select,textarea,.demobar,.toast,.lp,.welcome,.ws.sc,.doc .cap,.amap u,.tstep>u{font-family:var(--ui-font)}
+body{font-size:14px;color:#2a2a2a}
+b,strong,th,h1,h2,h3,h4{font-weight:700}
+:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+/* workspace scale: 12 / 12.5 / 13.5 / 14.5 / 15.5 / 18 */
+.ws,.ws.sc,#layer,.toast{font-size:13.5px}
+.ws .topbar .logo{font-size:19px;font-weight:400} .ws .logo small{font-size:16px}
+.ws .nav span,.ws .crumbs,.ws .tabs button,.ws.sc .sctabs button,.ws.sc aside .it,.ws.sc .nav span{font-size:14.5px}
+.ws aside .it,.ws table.v td,.ws.sc table.v td,.ws .btn,#layer .btn,.ws .note,#layer .note,.ws .lead,.ws .opt p,.ws table.mini,.ws .doc,#layer .doc,.ws .seg button,.ws table.tr tr.kid td,.ws .search,.ws .who,.ws .askin,.ws .tl span,.ws .ann small{font-size:13.5px}
+.ws table.v th,.ws.sc table.v th,#layer table.v th,.ws .ph .sub,.ws aside h4,.ws .sec>label,#layer .sec>label,.ws .pc2 label,.ws .crumbs .right,.ws .chips a,.cust>div,.cust span,.amap span,.amap small,.ws .tiles4 span,.aprov,.ws .legend,.trustbar,.ws .btn.sm,.ws .ba small,#layer .ba small,.ws .doc .cap,#layer .doc .cap,.ws .opt .dia span,.ws table.sched th.l,.ws table.sched td.c,.ws table.sched th.rot>div>span,.ws table.sched tr.meta td,.ws .results h5{font-size:12.5px}
+.ws .pill,#layer .pill,.kind,.ws .env,.ws .dstat,#layer .dstat,.ws .rec{font-size:12px}
+.ws .ph h1{font-size:18px}
+.ws .card>h2,.ws.sc .card>h2,.ws .detail h3,#layer .detail h3,.ws .opt h3,.ws aside h3,#layer .modal h2,.ws .ann b,.amap b,.tstep label{font-size:15.5px}
+.ws .tiles4 b{font-size:19px}
+.ws aside h4,.ws .sec>label,#layer .sec>label,.ws .pc2 label,.ws .ba small,#layer .ba small{font-weight:400;letter-spacing:.5px;color:#6b6b6b}
+.ws .btn.pri,.ws .btn.ok,.ws .btn.org,#layer .btn.pri,.ws .tabs button.on,.ws.sc aside .it.on{font-weight:700}
+.ws .pill,.kind,.ws .env{font-weight:400;letter-spacing:.2px} .ws .env{padding:2px 11px}
+.ws .tl span.new,.ws .tl span.soon{font-weight:400}
+.ws table.v td,.ws table.v th{line-height:1.45}
+.ws .card,.ws .opt,.ws .note,.ws .btn,#layer .modal,.amap button,.ws .tiles4>div{border-radius:4px}
+.ws .btn,#layer .btn{background:#fff;border-color:#c2c2c2;padding:5px 13px} .ws .btn:hover,#layer .btn:hover{background:#f1f1f1}
+.ws .btn.pri,#layer .btn.pri{background:var(--blue);border-color:#1f559f} .ws .btn.pri:hover,#layer .btn.pri:hover{background:#245eac}
+.ws .btn.ok{background:var(--green);border-color:#2c7c2c} .ws .btn.org,#layer .btn.org{background:var(--orange);border-color:#d67a0c} .ws .btn.org:hover{background:#e0841a}
+.ws .btn.sm,#layer .btn.sm{padding:2px 9px}
+.ws .decide,.ws .bar{flex-wrap:wrap}
+.ws .ph{align-items:flex-end;padding-bottom:10px;margin-bottom:14px} .ws .ph .sub{max-width:900px;line-height:1.45}
+.demobar{font-size:12.5px;padding:6px 10px} .demobar button{padding:2px 12px;border-radius:12px} .demobar button.on{font-weight:700}
+/* landing and sign-in scale: 14 / 16 / 19 / 30 / 48 */
+.lp,.welcome{font-size:16px}
+.lp-hero h1{font-size:48px;letter-spacing:0;line-height:1.12} .lp-hero p{font-size:19px}
+.lp-brand,.w-brand{font-weight:700} .lp-nav nav a{font-size:16px}
+.lp-sec{padding:72px 0} .lp-sec h2{font-size:30px;letter-spacing:0;margin:6px 0 10px} .lp-sub{font-size:17px}
+.lp-eye,.w-eye{font-size:13px;font-weight:400;letter-spacing:1.2px;text-transform:uppercase}
+.lp-benefits b,.lp-steps h3,.lp-steps.five h3,.lp-study h3{font-size:19px}
+.lp-benefits p,.lp-steps p,.lp-steps.five p,.lp-study p,.lp-study ul,.lp details p,.lp-steps a,.lp-study .kv{font-size:16px}
+.lp-st,.lp-aud,.foot{font-size:14px}
+.lp summary{font-size:19px;font-weight:400;align-items:center} .lp summary::after{font-size:20px} .lp details{padding:16px 0}
+.lp .lp-cta .btn.org,.lp .lp-cta .btn.ghost,.lp .lp-cta .btn.ghost span,.lp .lp-nav .btn.org,.lp .lp-end .btn{font-size:16px}
+.lp .lp-end .btn:not(.org){background:#fff;border-color:#c2c8d4;font-weight:400}
+.w-story h1{font-size:40px} .w-story p,.w-form p{font-size:16px} .w-form h2{font-size:28px}
+.w-flow span{font-size:14px} .w-flow b{font-size:16px} .sf{font-size:14px;font-weight:400} .sf input,.sf select{font-size:15px} .w-form .btn.big{font-size:16px;font-weight:700}
+.roles b{font-size:15px;font-weight:700} .roles small{font-size:12.5px}
+.ws.sc aside .it u{display:none} .ws.sc aside .it{padding-left:18px}
+.btn{background:#fff} .btn.big:not(.org){font-weight:400}
+.ws table.v th{white-space:normal;vertical-align:bottom}
 @media print{ #app,.toast{display:none} .ovl{position:static;background:none;display:block} .modal.wide{width:auto;height:auto;max-height:none;box-shadow:none} .modal .bd{overflow:visible} .modal h2 a{display:none} }
 </style>
 </head>
