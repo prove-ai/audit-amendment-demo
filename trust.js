@@ -133,11 +133,7 @@ function vTrust(){ const n=trustNums(), f=S.tf||'all', sc=S.role==='site', kids=
       <div><b>${n.ai}</b><span>items drafted by AI</span></div><div><b>${n.calc}</b><span>calculated by a fixed rule</span></div>
       <div><b>${n.done} of ${n.need}</b><span>automated steps reviewed by a named person</span></div><div class="${n.wait?'w':''}"><b>${n.wait}</b><span>waiting for a person</span></div>
       <div class="${n.doubt?'w':''}"><b>${n.doubt}</b><span>doubts the assistant raised itself</span></div></div>
-    <div class="card" style="margin-top:14px"><h2>How to read this page</h2><div class="bd"><div class="rules3">
-      <div>${kindPill('ai')}<p>The assistant read a document and wrote a draft. A draft can be wrong. Each one shows its source page, its test results and its own doubt, and it changes nothing until a named person accepts it.</p></div>
-      <div>${kindPill('calc')}<p>A fixed rule worked on recorded data, with no judgement involved. The rule is written out, so anyone can redo the result by hand and get the same answer.</p></div>
-      <div><span class="kind person">Reviewed by a person</span><p>The name, organisation and time of whoever accepted, rejected or signed. Three signatures are needed before a site collects data: sponsor, CRO and site.</p></div></div></div></div>
-    <div class="bar"><div class="seg">${[['all','Everything automated'],['wait','Waiting for a person'],['ai','AI drafts only']].map(x=>`<button class="${f===x[0]?'on':''}" ${h(()=>{S.tf=x[0]})}>${x[1]}</button>`).join('')}</div>
+    <div class="bar" style="margin-top:14px"><div class="seg">${[['all','Everything automated'],['wait','Waiting for a person'],['ai','AI drafts only']].map(x=>`<button class="${f===x[0]?'on':''}" ${h(()=>{S.tf=x[0]})}>${x[1]}</button>`).join('')}</div>
       <span class="sp"></span><button class="btn" ${h(()=>{S.af={q:'',org:'AI',site:''};nav(S.role,sc?'admin':'audit');})}>AI entries in the audit trail</button><button class="btn" ${h(openPacket)}>Inspection Packet</button></div>
     <table class="v tr"><tr><th>ID</th><th>What was produced</th><th>How</th><th>Based on · checks</th><th>Reviewed by a person</th></tr>${rows||'<tr><td colspan="5" class="muted">Nothing matches this filter.</td></tr>'}</table>
     <div class="card" style="margin-top:14px"><h2>Who does what in a casebook update</h2><div class="bd"><div class="rules3">
@@ -145,5 +141,5 @@ function vTrust(){ const n=trustNums(), f=S.tf||'all', sc=S.role==='site', kids=
       <div><b>CRO</b><p>Moves each site to the new version once that site’s ethics committee has approved the amended protocol, and follows up readiness.</p></div>
       <div><b>Site</b><p>Does not build the casebook. It applies the new version to its own participants, confirms it is ready and signs, or reports that it does not work.</p></div></div></div></div>`;
   const sub='Everything in this amendment that was produced automatically: what it was based on, how it was checked, what the assistant was unsure of, and which named person reviewed it.';
-  return sc?scPage([['AI Record',null,1]],`<p class="lead" style="margin:0 0 12px">${sub}</p>${body}`):`<div class="ph"><div><h1>AI Record</h1><div class="sub">${sub}</div></div></div>${body}`;
+  return sc?scPage([['AI Record',null,1]],body):`<div class="ph"><div><h1>AI Record</h1><div class="sub">${sub}</div></div></div>${body}`;
 }

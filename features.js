@@ -34,7 +34,7 @@ function proofModal(s,t){
 function tasksTable(s,edit){
   const lab={todo:'<span class="pill gray">Not started</span>',prog:'<span class="pill blue">In progress</span>',done:'<span class="pill solid">Done</span>'};
   return `<table class="v"><tr><th>Task</th><th>Owner</th><th>Due</th><th>Status</th><th>Proof</th><th>Caused by</th><th></th></tr>${siteTasks(s).map(t=>`<tr>
-    <td><b>${t.title}</b></td><td class="nw">${t.role}</td><td class="nw">${t.due}</td><td class="nw">${lab[t.st]}</td>
+    <td>${t.title}</td><td class="nw">${t.role}</td><td class="nw">${t.due}</td><td class="nw">${lab[t.st]}</td>
     <td>${t.proof?`${t.proof}<div class="muted" style="font-size:12px">${t.by}, ${t.at}</div>`:'<span class="muted">—</span>'}</td>
     <td class="nw"><a ${h(()=>changeCard(t.sug))}>${t.sug}</a></td>
     <td class="nw">${edit?(t.st==='todo'?`<button class="btn sm" ${h(()=>{S.task[s.id+t.k]={st:'prog'};log(`Task started: ${t.title}`,s.id);})}>Start</button> `:'')+(t.st!=='done'?`<button class="btn sm pri" ${h(()=>proofModal(s,t))}>Mark done…</button>`:`<a ${h(()=>{S.task[s.id+t.k]={st:'prog'};log(`Task reopened: ${t.title}`,s.id);})}>Reopen</a>`)

@@ -125,7 +125,7 @@ function planSummary(st){ const pl=sitePlan(st); return `<div class="tiles4">
 function vSitePlan(){ const st=site(S.mySite), pl=sitePlan(st), live=!!S.dep[st.id];
   return scPage([['Transition Plan',null,1]],`
     <div class="card"><h2>How version 2 maps onto your participants already in the trial</h2><div class="bd">
-      <p style="margin:0 0 12px">Each participant is at a different point in the study, so the amended schedule lands differently for each of them. This plan works it out per participant, on real dates: what was planned before, what is planned now, what to book, and where to enter it. ${live?'':'<b>Version 2 is not active at your site yet, so this is a preview.</b>'}</p>
+      ${live?'':'<p style="margin:0 0 12px">Version 2 is not active at your site yet, so this is a preview.</p>'}
       ${planSummary(st)}
       <p style="margin:12px 0 0"><a ${h(()=>{S.open.plhow=!S.open.plhow})}>${S.open.plhow?'▾ Hide how this plan is worked out':'▸ How is this plan worked out, and why can I rely on it?'}</a></p>
       ${S.open.plhow?`<div class="whybox"><table class="why">
