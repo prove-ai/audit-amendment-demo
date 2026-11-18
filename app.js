@@ -275,10 +275,9 @@ function search(q){ q=q.trim().toLowerCase(); const out=$('res'); if(q.length<2)
 /* ================= Chrome ================= */
 function chrome(body){
   const r=S.role, m=me(), sc=r==='site';
-  const demobar=`<div class="demobar"><b>Concept demo · not a Veeva product</b>
-    ${[['home','⌂ Home'],['sponsor','1 Sponsor'],['cro','2 CRO'],['site','3 Site']].map(x=>`<button class="${r===x[0]&&!(r==='home'&&S.home==='signin')?'on':''}" ${go(x[0])}>${x[1]}</button>`).join('')}
-    <button ${h(()=>{nav('home',null,{home:'signin'});})} class="${r==='home'&&S.home==='signin'?'on':''}">Log in</button><span class="sp"></span><button ${h(openPacket)}>Inspection Packet</button><button ${h(()=>openPdf(44))}>Protocol PDF</button><button ${h(()=>{location.hash='';location.reload();return false;})}>Reset demo</button></div>`;
-  if(r==='home') return demobar+tourBar()+body;
+  const demobar=`<div class="demobar">${[['home','⌂ Home'],['sponsor','1 Sponsor'],['cro','2 CRO'],['site','3 Site']].map(x=>`<button class="${r===x[0]&&!(r==='home'&&S.home==='signin')?'on':''}" ${go(x[0])}>${x[1]}</button>`).join('')}
+    <button ${h(()=>{nav('home',null,{home:'signin'});})} class="${r==='home'&&S.home==='signin'?'on':''}">Log in</button>${tourCtl()}<span class="sp"></span><button ${h(openPacket)}>Inspection Packet</button><button ${h(()=>openPdf(44))}>Protocol PDF</button><button ${h(()=>{location.hash='';location.reload();return false;})}>Reset demo</button></div>`;
+  if(r==='home') return demobar+body;
   const top=`<div class="topbar"><div class="logo">${sc?'Vault Clinical<i>|</i><small>Site Connect</small>':'Vault CDMS'}</div>
     <div class="search"><div class="sel">${sc?'All':'Subjects'} <span>▾</span></div><input id="q" placeholder="Search sites, subjects, people, changes, protocol…" autocomplete="off"><span class="mag">⌕</span><div id="res"></div></div>
     <div class="who">${m.n} · ${m.o} <div class="avatar">${m.i}</div><a style="color:#b9c2d8;font-size:12px" ${h(()=>{log('User signed out');nav('home');})}>Log out</a></div></div>`;
@@ -287,7 +286,7 @@ function chrome(body){
   const navb=`<div class="nav">${items.map((x,i)=>`<span style="cursor:pointer" class="${i===on?'on':''}" ${sc?'':h(tabGo[i]||(()=>toast(x.replace(' ▾','')+' is outside this demo. Data Entry, Studio and Tools are live.')))}>${x}</span>`).join('')}</div>`;
   const crumbs=sc?'':`<div class="crumbs"><a ${h(openStudies)}>⌂ My Studies</a><span class="sep">›</span><a ${h(openStudy)}>CTJ301UC201 ▾</a><span class="sep">›</span><span>${r==='sponsor'?'CTJ301UC201_DEV1':r==='edc'?S.edc.site+' · Data Entry':'CTJ301UC201'}</span>
     <div class="right">${r==='sponsor'?`<span class="env dev">DEVELOPMENT</span><span>Version: <u>${S.signed?'2.0':'2.0 (draft)'}</u></span>`:`<span class="env">PRODUCTION</span><span>Latest version: <u>${S.signed?2:1}</u></span>`}</div></div>`;
-  return `${demobar}${tourBar()}<div class="ws ${sc?'sc':''}">${top}${navb}${crumbs}${r!=='edc'&&S.pg[r]!=='trust'?trustBar():''}<div class="layout">${side()}<main>${body}</main></div></div>`;
+  return `${demobar}<div class="ws ${sc?'sc':''}">${top}${navb}${crumbs}${r!=='edc'&&S.pg[r]!=='trust'?trustBar():''}<div class="layout">${side()}<main>${body}</main></div></div>`;
 }
 function side(){
   const r=S.role, p=S.pg[r], it=(l,pg,extra='')=>`<div class="it ${pg?(p===pg||(pg==='rollout'&&p==='site')?'on':''):'off'}" ${pg?go(r,pg):''}>${l}${extra}</div>`;

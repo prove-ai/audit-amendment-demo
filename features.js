@@ -243,6 +243,5 @@ const TOUR=[
   ['Everything is in one chained audit trail, and each entry says whether a person, the AI or a fixed rule made it. Filter it, export it, or open the Inspection Packet (DRAFT until nothing is open).',()=>nav('cro','audit')],
 ];
 function startTour(){ S.tour=0; TOUR[0][1](); }
-function tourBar(){ if(S.tour===null) return ''; const i=S.tour, mv=n=>h(()=>{S.tour=n;TOUR[n][1]();});
-  return `<div style="background:#fff7e8;border-bottom:1px solid #f0d49a;padding:7px 16px;display:flex;gap:12px;align-items:center"><b style="color:var(--amber);white-space:nowrap">Walkthrough ${i+1}/${TOUR.length}</b><span style="flex:1">${TOUR[i][0]}</span>
-    <button class="btn sm" ${i?mv(i-1):'disabled'}>‹ Back</button><button class="btn sm pri" ${i<TOUR.length-1?mv(i+1):'disabled'}>Next ›</button><a ${h(()=>{S.tour=null})}>End walkthrough</a></div>`; }
+function tourCtl(){ if(S.tour===null) return ''; const i=S.tour, mv=n=>h(()=>{S.tour=n;TOUR[n][1]();});
+  return `<span class="tourctl" title="${TOUR[i][0].replace(/"/g,'&quot;')}"><em>Walkthrough ${i+1}/${TOUR.length}</em><button ${i?mv(i-1):'disabled'}>‹ Back</button><button class="nx" ${i<TOUR.length-1?mv(i+1):'disabled'}>Next ›</button><button ${h(()=>{S.tour=null})}>End walkthrough</button></span>`; }
