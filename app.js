@@ -278,7 +278,7 @@ function chrome(body){
   const demobar=`<div class="demobar">${[['home','⌂ Home'],['sponsor','1 Sponsor'],['cro','2 CRO'],['site','3 Site']].map(x=>`<button class="${r===x[0]&&!(r==='home'&&S.home==='signin')?'on':''}" ${go(x[0])}>${x[1]}</button>`).join('')}
     <button ${h(()=>{nav('home',null,{home:'signin'});})} class="${r==='home'&&S.home==='signin'?'on':''}">Log in</button>${tourCtl()}<span class="sp"></span><button ${h(openPacket)}>Inspection Packet</button><button ${h(()=>openPdf(44))}>Protocol PDF</button><button ${h(()=>{location.hash='';location.reload();return false;})}>Reset demo</button></div>`;
   if(r==='home') return demobar+body;
-  const top=`<div class="topbar"><div class="logo">${sc?'Vault Clinical<i>|</i><small>Site Connect</small>':'Vault CDMS'}</div>
+  const top=`<div class="topbar"><div class="logo">${sc?'Vault Clinical<i>|</i><small>Site Connect</small>':''}</div>
     <div class="search"><div class="sel">${sc?'All':'Subjects'} <span>▾</span></div><input id="q" placeholder="Search sites, subjects, people, changes, protocol…" autocomplete="off"><span class="mag">⌕</span><div id="res"></div></div>
     <div class="who">${m.n} · ${m.o} <div class="avatar">${m.i}</div><a style="color:#b9c2d8;font-size:12px" ${h(()=>{log('User signed out');nav('home');})}>Log out</a></div></div>`;
   const items=sc?['Site Connect ▾']:['Data Entry','Review ▾','Assessments','Studio ▾','Coder','Reports','Dashboards','Loader','Labs','Randomization','Tools ▾','My Training','Workbench'];
@@ -588,7 +588,7 @@ function vSiteAdmin(){ const s=site(S.mySite), t=S.adTab;
   return scPage([['Audit Trail',()=>{S.adTab='audit'},t==='audit'],['Site Staff Access',()=>{S.adTab='staff'},t!=='audit']],`<div class="card"><div class="bd" style="padding:8px 12px">${t==='audit'?auditTable(e=>e.s===S.mySite||(!e.s&&/approved|filed|deployed/i.test(e.x)),true):staff}</div></div>`); }
 
 /* ================= Landing ================= */
-const ROLES={sponsor:['Sponsor','Pharma or biotech','Vault CDMS Studio','Approve the casebook change'],cro:['CRO','Clinical research organisation','Vault CDMS EDC Tools','Roll out to sites'],site:['Site','Hospital or clinic','Vault Clinical Site Connect','Review and acknowledge']};
+const ROLES={sponsor:['Sponsor','Pharma or biotech','Studio','Approve the casebook change'],cro:['CRO','Clinical research organisation','EDC Tools','Roll out to sites'],site:['Site','Hospital or clinic','Vault Clinical Site Connect','Review and acknowledge']};
 const demoAcct=r=>r==='site'?me0s(S.auth.sid):ME[r];
 const me0s=sid=>{const st=site(sid);return {n:st.coord,u:st.coord.toLowerCase().replace(/\W+/g,'.')+'@site.example',o:'Site '+sid};};
 function enter(role,u){ if(role==='site') S.mySite=S.auth.sid; if(u) S.user[role]=Object.assign({sid:S.auth.sid},u); else delete S.user[role];
@@ -626,7 +626,7 @@ function vSignIn(){ const a=S.auth, d=demoAcct(a.role);
         <h1>One amendment.<br>Three sign-offs.<br><em>Nothing dropped.</em></h1>
         <p>Every schema change comes with the protocol text behind it, so each party can approve what it is responsible for and pass it on.</p>
         <div class="w-flow"><span><b>Sponsor</b>approves the design</span><i>→</i><span><b>CRO</b>rolls out to sites</span><i>→</i><span><b>Site</b>acknowledges</span></div></div>
-      <footer>Layouts follow Vault CDMS and Site Connect, so existing users can find their way.</footer></section>
+      <footer>Layouts follow Veeva products, so existing users can find their way.</footer></section>
     <section class="w-form"><div>
       <span class="w-eye">YOUR WORKSPACE</span><h2>${a.mode==='login'?'Welcome back.':'Create your account.'}</h2>
       <p>${a.mode==='login'?'Choose your role and open your workspace.':'Tell us who you are and we will take you to the right workspace.'}</p>
