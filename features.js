@@ -139,17 +139,65 @@ const vCountries=()=>`<div class="ph"><h1>Study Countries</h1></div><table class
 /* ================= Audit: chain, filters, export ================= */
 const fnv=s=>{let a=0x811c9dc5,b=0x1000193;for(let i=0;i<s.length;i++){a^=s.charCodeAt(i);a=Math.imul(a,16777619)>>>0;b=(Math.imul(b^s.charCodeAt(i),2246822519))>>>0;}return (a.toString(16).padStart(8,'0')+b.toString(16).padStart(8,'0'));};
 function chain(){ let prev='0'.repeat(16); const l=S.log.slice().reverse(); l.forEach((e,i)=>{e.seq=i+1;e.hash=fnv(prev+e.t+e.u+e.o+e.s+e.x);prev=e.hash;}); return l.reverse(); }
-function auditRows(f){ const a=S.af, q=a.q.toLowerCase();
-  const l=chain().filter(f||(()=>true)).filter(e=>(!a.org||e.o.startsWith(a.org))&&(!a.site||e.s===a.site)&&(!q||(e.x+e.u+e.s).toLowerCase().includes(q)));
-  return l.map(e=>`<tr><td class="r muted">${e.seq}</td><td class="nw muted">${e.t}</td><td class="nw">${e.o==='AI'?kindPill('ai'):e.u==='System'?kindPill('calc'):'<span class="kind person">Person</span>'}</td><td class="nw">${e.u}</td><td class="nw">${e.o}</td><td class="nw">${e.s||'—'}</td><td>${e.x}</td>
-    <td class="nw">${e.ref&&e.ref.sug?`<a ${h(()=>changeCard(e.ref.sug))}>${e.ref.sug}</a>`:e.ref&&e.ref.p?`<a ${h(()=>openPdf(e.ref.p))}>p. ${e.ref.p}</a>`:'<span class="muted">—</span>'}</td><td><code title="Chained to the previous entry">${e.hash.slice(0,10)}</code></td></tr>`).join('')||'<tr><td colspan="9" class="muted">No entries match.</td></tr>'; }
+const STAGES=[['src','Protocol','The amended protocol is filed. Everything after it has to trace back to this document.'],
+  ['ai','AI draft','The assistant reads the protocol and drafts the changes, and fixed rules calculate who is affected. Drafts change nothing in the casebook.'],
+  ['rev','Sponsor review','The sponsor chooses a schema option, accepts or rejects each change, asks questions and runs validation.'],
+  ['sign','Sponsor signature','A named sponsor user signs casebook version 2. Only after this can the CRO give it to sites.'],
+  ['ec','Ethics approval','Each site’s ethics committee approves the amended protocol. A site cannot move to version 2 before its approval is recorded.'],
+  ['roll','CRO rollout','The CRO makes version 2 the active version, site by site, and follows up readiness.'],
+  ['site','Site','The site completes readiness tasks, confirms the plan for each participant, enters data and signs its acknowledgement.']];
+function stageOf(e){ const x=e.x;
+  if(/^Protocol CTJ|Casebook version 1 deployed/.test(x)) return 'src';
+  if(/approved by electronic signature/.test(x)) return 'sign';
+  if(/^EC approval|submitted to EC/.test(x)) return 'ec';
+  if(/set as active version|Transition plan calculated|approval withdrawn|Reminder sent/.test(x)) return 'roll';
+  if((e.o==='AI'&&!/^Answered/.test(x))||/Site impact calculated/.test(x)) return 'ai';
+  if(e.o.startsWith('Site')||/acknowledged/.test(x)) return 'site';
+  return e.o==='CRO'?'roll':'rev'; }
+const madeBy=e=>e.o==='AI'?kindPill('ai'):e.u==='System'?kindPill('calc'):'<span class="kind person">Person</span>';
+function auditList(f,noStage){ const a=S.af, q=a.q.toLowerCase();
+  return chain().filter(f||(()=>true)).filter(e=>(!a.org||e.o.startsWith(a.org))&&(!a.site||e.s===a.site)&&(!q||(e.x+e.u+e.s).toLowerCase().includes(q))&&(noStage||!a.st||stageOf(e)===a.st)); }
+function auditRows(f,plain){ const l=plain?chain().filter(f||(()=>true)):auditList(f), open=S.open, out=[];
+  const link=e=>e.ref&&e.ref.sug?`<a>${e.ref.sug}</a>`:e.ref&&e.ref.p?`<a>p. ${e.ref.p}</a>`:'<span class="muted">—</span>';
+  const row=(e,kid)=>`<tr class="${plain?'':'click'} ${kid?'kid':''}" ${plain?'':h(()=>auditEntry(e.seq))}><td class="r muted">${e.seq}</td><td class="nw muted">${e.t}</td><td class="nw">${madeBy(e)}</td><td class="nw">${e.u}<div class="muted">${e.o}</div></td><td class="nw">${e.s||'—'}</td><td>${e.x}</td>
+    <td class="nw">${link(e)}</td><td class="nw"><code title="Chained to the previous entry">${e.hash.slice(0,10)}</code>${plain?'':' <span class="chev">›</span>'}</td></tr>`;
+  const gk=e=>e.x.replace(/for \d+ participant\(s\)/,'for the site’s participants'), groups={}; if(!plain&&!S.af.flat) l.forEach(e=>{ if(e.s) (groups[gk(e)]=groups[gk(e)]||[]).push(e); });
+  const seen={}; l.forEach(e=>{ const x0=gk(e), g=groups[x0]; if(!g||g.length<3||!e.s) return out.push(row(e));
+    if(seen[x0]) return; seen[x0]=1; const k='aud:'+x0, on=open[k], who=[...new Set(g.map(x=>x.u))];
+    out.push(`<tr class="click grow" ${h(()=>{S.open[k]=!on})}><td class="r muted">${on?'▾':'▸'}</td><td class="nw muted">${g[g.length-1].t.slice(0,11)} to ${g[0].t.slice(0,11)}</td><td class="nw">${madeBy(e)}</td><td class="nw">${who.length>2?who.length+' people':who.join(', ')}<div class="muted">${e.o.replace(/ .*/,'')}</div></td>
+      <td class="nw"><span class="pill gray">${g.length} sites</span></td><td><b>${x0}</b><div class="muted">The same step at ${g.length} sites. Click to ${on?'hide':'list'} them.</div></td><td></td><td></td></tr>`);
+    if(on) g.forEach(x=>out.push(row(x,1))); });
+  return out.join('')||'<tr><td colspan="8" class="muted">No entries match.</td></tr>'; }
+function auditMap(f){ const l=auditList(f,true), cur=S.af.st;
+  return `<div class="amap">${STAGES.map((s,i)=>{const g=l.filter(e=>stageOf(e)===s[0]), last=g[0];
+    return `<button class="${cur===s[0]?'on':''} ${g.length?'has':''}" ${h(()=>{S.af.st=cur===s[0]?'':s[0]})}><u>${i+1}</u><b>${s[1]}</b><span>${g.length?g.length+(g.length===1?' entry':' entries'):'Nothing yet'}</span><small>${last?'Latest '+last.t.slice(0,11):'&nbsp;'}</small></button>`;}).join('<i>→</i>')}</div>
+  <div class="note blue" style="margin-top:10px">${icon('ok')}<div>${cur?`<b>${STAGES.find(s=>s[0]===cur)[1]}.</b> ${STAGES.find(s=>s[0]===cur)[2]} <a ${h(()=>{S.af.st=''})}>Show all stages</a>`:'<b>How to read this.</b> The amendment passes through seven stages, left to right. Click a stage to see only its entries. Click any entry to see who did it, what it led to and what it is linked to.'}</div></div>`; }
+function auditEntry(seq){ const l=chain(), e=l.find(x=>x.seq===seq); if(!e) return false; const prev=l.find(x=>x.seq===seq-1), next=l.find(x=>x.seq===seq+1), st=STAGES.find(s=>s[0]===stageOf(e)), act=(/\((AI-\d+)\)/.exec(e.x)||[])[1];
+  const rel=l.filter(x=>x!==e&&((e.ref&&e.ref.sug&&x.ref&&x.ref.sug===e.ref.sug)||(e.s&&x.s===e.s))).slice(0,8), mini=(x,lbl)=>x?`<tr class="click" ${h(()=>auditEntry(x.seq))}><td class="nw muted">${lbl||'#'+x.seq}</td><td class="nw muted">${x.t}</td><td class="nw">${x.u} · ${x.o}</td><td>${x.x}</td><td class="chev">›</td></tr>`:'';
+  const sec=(t,b)=>`<div class="sec"><label>${t}</label>${b}</div>`, btns=[];
+  if(e.ref&&e.ref.sug&&sug(e.ref.sug)) btns.push(`<button class="btn pri" ${h(()=>changeCard(e.ref.sug))}>Open change ${e.ref.sug}: source, tests, reviewers ›</button>`);
+  if(act) btns.push(`<button class="btn pri" ${h(()=>actModal(aiActs().find(a=>a.id===act)))}>Open ${act}: how this was produced and checked ›</button>`);
+  if(e.ref&&e.ref.p) btns.push(`<button class="btn" ${h(()=>openPdf(e.ref.p))}>Open protocol at p. ${e.ref.p} ›</button>`);
+  if(e.s&&S.role!=='site') btns.push(`<button class="btn" ${h(()=>{closeM();nav('cro','site',{croSite:e.s,siteTab:'overview'});})}>Open site ${e.s} ›</button>`);
+  if(/Change request (CR-\d+)/.test(e.x)&&S.role!=='site') btns.push(`<button class="btn" ${h(()=>{closeM();nav(S.role,'feedback');})}>Open change requests ›</button>`);
+  $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:780px"><h2>Audit entry #${e.seq} ${madeBy(e)}<a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
+    <h3>${e.x}</h3>
+    <dl class="kv" style="margin-top:10px"><dt>When</dt><dd>${e.t}</dd><dt>Who</dt><dd>${e.u} · ${e.o}${e.o==='AI'?' <span class="muted">(the assistant; a draft or advice, never a decision)</span>':e.u==='System'?' <span class="muted">(a fixed rule, no judgement involved)</span>':''}</dd>
+      <dt>Site</dt><dd>${e.s?`${e.s} · ${site(e.s).name}, ${site(e.s).city}`:'Whole study'}</dd><dt>Stage</dt><dd><b>${st[1]}</b> · ${st[2]}</dd></dl>
+    ${btns.length?sec('Go to what this entry is about',`<div style="display:flex;gap:8px;flex-wrap:wrap">${btns.join('')}</div>`):''}
+    ${sec('What came just before and after',`<table class="v">${mini(prev,'Before')}${mini(next,'After')}</table>`)}
+    ${rel.length?sec(`Other entries about the same ${e.ref&&e.ref.sug?'change or ':''}site`,`<table class="v">${rel.map(x=>mini(x)).join('')}</table>`):''}
+    ${sec('Has it been altered?',`<dl class="kv"><dt>This entry</dt><dd><code>${e.hash}</code></dd><dt>Entry before it</dt><dd><code>${prev?prev.hash:'0000000000000000 (first entry)'}</code></dd></dl>
+      <p class="muted" style="margin:8px 0 0">Each code is calculated from the entry before it plus this entry’s time, user and text. Editing or deleting any earlier entry would change every code after it, which is how a reviewer can tell the list is complete.</p>`)}</div></div></div>`; return false; }
 function auditTable(f,noFilter){ const a=S.af; window._af=f;
-  return `${noFilter?'':`<div class="bar"><input id="afq" value="${a.q}" placeholder="Filter by text, user or subject…" style="padding:5px 8px;border:1px solid #bbb;border-radius:2px;width:280px">
+  if(noFilter) return `<table class="v"><tr><th>#</th><th>Timestamp</th><th>Made by</th><th>Who</th><th>Site</th><th>Event</th><th>Linked to</th><th>Check code</th></tr><tbody>${auditRows(f,true)}</tbody></table>`;
+  return `${auditMap(f)}<div class="bar"><input id="afq" value="${a.q}" placeholder="Filter by text, user or subject…" style="padding:5px 8px;border:1px solid #bbb;border-radius:2px;width:240px">
     <select id="afo" style="padding:5px">${['','AI','Sponsor','CRO','Site','Vault'].map(o=>`<option value="${o}" ${a.org===o?'selected':''}>${o==='AI'?'AI (assistant)':o==='Vault'?'System (calculated)':o||'Everyone'}</option>`).join('')}</select>
     <select id="afs" style="padding:5px"><option value="">All sites</option>${SITES.map(s=>`<option ${a.site===s.id?'selected':''}>${s.id}</option>`).join('')}</select>
-    <span class="sp"></span><button class="btn" ${h(()=>{chain();return toast(`Chain intact: ${S.log.length} entries, each hash covers the entry before it`)})}>Verify chain</button>
-    <button class="btn" ${h(exportAudit)}>Export CSV</button></div>`}
-  <table class="v"><tr><th>#</th><th>Timestamp</th><th>Made by</th><th>User</th><th>Organisation</th><th>Site</th><th>Event</th><th>Source</th><th>Hash</th></tr><tbody id="audbody">${auditRows(f)}</tbody></table>`; }
+    <label style="display:flex;gap:5px;align-items:center;cursor:pointer" ${h(()=>{S.af.flat=!S.af.flat})}><input type="checkbox" ${a.flat?'':'checked'}>Group the same step across sites</label>
+    <span class="sp"></span><button class="btn" ${h(()=>{chain();return toast(`Chain intact: ${S.log.length} entries, each code covers the entry before it`)})}>Verify chain</button>
+    <button class="btn" ${h(exportAudit)}>Export CSV</button></div>
+  <table class="v aud"><tr><th>#</th><th>Timestamp</th><th>Made by</th><th>Who</th><th>Site</th><th>Event <span class="muted" style="font-weight:normal">· click a row for details</span></th><th>Linked to</th><th>Check code</th></tr><tbody id="audbody">${auditRows(f)}</tbody></table>`; }
 document.addEventListener('input',e=>{ if(e.target.id==='afq'){S.af.q=e.target.value;const b=$('audbody'); if(b) b.innerHTML=auditRows(window._af);} });
 document.addEventListener('change',e=>{ if(e.target.id==='afo'){S.af.org=e.target.value;render();} if(e.target.id==='afs'){S.af.site=e.target.value;render();} });
 function download(name,text,type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); return false; }
