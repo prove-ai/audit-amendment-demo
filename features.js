@@ -84,7 +84,7 @@ function vEdc(){
   const e=c.evs.find(q=>q.id===S.edc.ev), rows=c.rows(e), t=rows.find(r=>r.id===S.edc.row)||(e.ps?rows[0]:e)||e, nw=q=>q.tp||q.ps;
   const forms=e.ps?FORMS.filter(f=>f[0]==='PK'):FORMS.filter(f=>f[2].includes(e.id)), past=c.day!==null&&e.d!==undefined&&e.d<=c.day;
   const evRow=q=>{ const done=c.day===null?q.d===undefined&&x.d!=='SCR'&&!q.ps:(!q.ps&&(q.d===undefined||q.d<=c.day)), sv=Object.keys(S.form).filter(k=>k.startsWith(x.id+'|'+q.id+'|')).map(k=>S.form[k]);
-    return `<tr class="click ${q.id===e.id?'sel':''}" ${h(()=>{S.edc.ev=q.id;S.edc.row=null})}><td class="nw">${sv.length?(sv.some(v=>v.q.length)?icon('bad'):icon('ok')):done&&!nw(q)?'<span class="chk">✓</span>':'○'} <b>${q.ps?'PK':q.id}</b>${nw(q)?' <span class="new">NEW</span>':c.rows(q).length?` <span class="new" style="background:var(--green)">+${c.rows(q).length} rows</span>`:''}</td><td>${q.label}</td><td class="nw muted">${q.ps?'as needed':c.rand&&q.d!==undefined?fd(addDays(c.rand,q.d)):q.day||'—'}</td></tr>`; };
+    return `<tr class="click ${q.id===e.id?'sel':''}" ${h(()=>{S.edc.ev=q.id;S.edc.row=null})}><td class="nw">${sv.length?(sv.some(v=>v.q.length)?icon('bad'):icon('ok')):done&&!nw(q)?'<span class="chk">●</span>':'○'} <b>${q.ps?'PK':q.id}</b>${nw(q)?' <span class="new">NEW</span>':c.rows(q).length?` <span class="new" style="background:var(--green)">+${c.rows(q).length} rows</span>`:''}</td><td>${q.label}</td><td class="nw muted">${q.ps?'as needed':c.rand&&q.d!==undefined?fd(addDays(c.rand,q.d)):q.day||'—'}</td></tr>`; };
   let formBody;
   if(c.rand===null) formBody=`<div class="note blue">ⓘ <div>This participant is in screening and not yet randomised. The new PK samples apply from randomisation, and only if they are assigned to the PK subgroup.</div></div>`;
   else if(!forms.some(f=>f[0]==='PK')) formBody=`<div class="muted">Forms at this event are unchanged by the amendment: ${forms.map(f=>f[1]).join(', ')}.</div>`;
@@ -170,8 +170,7 @@ function auditRows(f,plain){ const l=plain?chain().filter(f||(()=>true)):auditLi
   return out.join('')||'<tr><td colspan="8" class="muted">No entries match.</td></tr>'; }
 function auditMap(f){ const l=auditList(f,true), cur=S.af.st;
   return `<div class="amap">${STAGES.map((s,i)=>{const g=l.filter(e=>stageOf(e)===s[0]), last=g[0];
-    return `<button class="${cur===s[0]?'on':''} ${g.length?'has':''}" ${h(()=>{S.af.st=cur===s[0]?'':s[0]})}><u>${i+1}</u><b>${s[1]}</b><span>${g.length?g.length+(g.length===1?' entry':' entries'):'Nothing yet'}</span><small>${last?'Latest '+last.t.slice(0,11):'&nbsp;'}</small></button>`;}).join('<i>→</i>')}</div>
-  <div class="note blue" style="margin-top:10px">${icon('ok')}<div>${cur?`<b>${STAGES.find(s=>s[0]===cur)[1]}.</b> ${STAGES.find(s=>s[0]===cur)[2]} <a ${h(()=>{S.af.st=''})}>Show all stages</a>`:'<b>How to read this.</b> The amendment passes through seven stages, left to right. Click a stage to see only its entries. Click any entry to see who did it, what it led to and what it is linked to.'}</div></div>`; }
+    return `<button class="${cur===s[0]?'on':''} ${g.length?'has':''}" ${h(()=>{S.af.st=cur===s[0]?'':s[0]})}><u>${i+1}</u><b>${s[1]}</b><span>${g.length?g.length+(g.length===1?' entry':' entries'):'Nothing yet'}</span><small>${last?'Latest '+last.t.slice(0,11):'&nbsp;'}</small></button>`;}).join('<i>→</i>')}</div>`; }
 function auditEntry(seq){ const l=chain(), e=l.find(x=>x.seq===seq); if(!e) return false; const prev=l.find(x=>x.seq===seq-1), next=l.find(x=>x.seq===seq+1), st=STAGES.find(s=>s[0]===stageOf(e)), act=(/\((AI-\d+)\)/.exec(e.x)||[])[1];
   const rel=l.filter(x=>x!==e&&((e.ref&&e.ref.sug&&x.ref&&x.ref.sug===e.ref.sug)||(e.s&&x.s===e.s))).slice(0,8), mini=(x,lbl)=>x?`<tr class="click" ${h(()=>auditEntry(x.seq))}><td class="nw muted">${lbl||'#'+x.seq}</td><td class="nw muted">${x.t}</td><td class="nw">${x.u} · ${x.o}</td><td>${x.x}</td><td class="chev">›</td></tr>`:'';
   const sec=(t,b)=>`<div class="sec"><label>${t}</label>${b}</div>`, btns=[];
@@ -223,7 +222,7 @@ function openPacket(){
       ${SITES.filter(s=>S.ack[s.id]).map(s=>`<tr><td>${s.id}: site acknowledgement</td><td>${S.ack[s.id].by}</td><td>Acknowledgement</td><td>${S.ack[s.id].at}</td></tr>`).join('')}</table>`)}
     ${sec('4. Site status',`<table class="v"><tr><th>Site</th><th>EC approval</th><th>Active version</th><th>Subjects gaining PK visits</th><th>Tasks done</th><th>Acknowledged</th></tr>${SITES.map(s=>{const t=siteTasks(s);return `<tr><td>${s.id} · ${s.name}</td><td>${s.irb||'Pending'}</td><td>${S.dep[s.id]?2:1}</td><td>${stats(s).aff}</td><td>${t.filter(q=>q.st==='done').length} of ${t.length}</td><td>${S.ack[s.id]?S.ack[s.id].at:'—'}</td></tr>`}).join('')}</table>`)}
     ${sec('5. Open items',open.length?`<ul>${open.map(o=>`<li>${o}</li>`).join('')}</ul>`:'None.')}
-    ${sec('6. What was automated, and who reviewed it',`<table class="v"><tr><th>ID</th><th>Automated step</th><th>How</th><th>Checks</th><th>Reviewed by a person</th></tr>${aiActs().map(a=>`<tr><td class="nw">${a.id}</td><td>${a.t}<div class="muted">${a.out}</div></td><td class="nw">${KIND[a.k][0]}</td><td>${a.checks.filter(c=>c[0]==='ok').length} of ${a.checks.length} passed</td><td>${a.rev.ok?'✓ ':a.rev.ok===false?'Outstanding: ':''}${a.rev.txt}</td></tr>`).join('')}</table>`)}
+    ${sec('6. What was automated, and who reviewed it',`<table class="v"><tr><th>ID</th><th>Automated step</th><th>How</th><th>Checks</th><th>Reviewed by a person</th></tr>${aiActs().map(a=>`<tr><td class="nw">${a.id}</td><td>${a.t}<div class="muted">${a.out}</div></td><td class="nw">${KIND[a.k][0]}</td><td>${a.checks.filter(c=>c[0]==='ok').length} of ${a.checks.length} passed</td><td>${a.rev.ok?'':a.rev.ok===false?'Outstanding: ':''}${a.rev.txt}</td></tr>`).join('')}</table>`)}
     ${sec('7. Audit trail',auditTable(null,true))}</div></div></div>`; return false; }
 
 /* ================= Guided walkthrough ================= */
@@ -244,4 +243,4 @@ const TOUR=[
 ];
 function startTour(){ S.tour=0; TOUR[0][1](); }
 function tourCtl(){ if(S.tour===null) return ''; const i=S.tour, mv=n=>h(()=>{S.tour=n;TOUR[n][1]();});
-  return `<span class="tourctl" title="${TOUR[i][0].replace(/"/g,'&quot;')}"><em>Walkthrough ${i+1}/${TOUR.length}</em><button ${i?mv(i-1):'disabled'}>‹ Back</button><button class="nx" ${i<TOUR.length-1?mv(i+1):'disabled'}>Next ›</button><button ${h(()=>{S.tour=null})}>End walkthrough</button></span>`; }
+  return `<span class="tourctl" title="${TOUR[i][0].replace(/"/g,'&quot;')}"><button ${i?mv(i-1):'disabled'}>‹ Back</button><button class="nx" ${i<TOUR.length-1?mv(i+1):'disabled'}>Next ›</button><button ${h(()=>{S.tour=null})}>End walkthrough</button></span>`; }

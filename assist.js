@@ -7,15 +7,15 @@ const prosCons=k=>({pros:MATRIX.filter(r=>r[1][k][0]==='ok').map(r=>[r[0],r[1][k
 /* ================= Schedule: current vs each proposal ================= */
 function vSchedule(){
   const k=S.schedK||S.design||'A', D=DESIGNS[k], v1=S.view==='v1', pc=prosCons(k), v=VERD[D.verdict], lock=!!S.signed, chosen=S.design===k;
-  const seg=`<div class="seg"><button class="${v1?'on':''}" ${h(()=>{S.view='v1'})}>Version 1 (current)</button>${Object.keys(DESIGNS).map(o=>`<button class="${!v1&&k===o?'on':''}" ${h(()=>{S.view='v2';S.schedK=o})}>Proposal ${o}${DESIGNS[o].verdict==='rec'?' ★':''}${S.design===o?' ✓':''}</button>`).join('')}</div>`;
-  const panel=v1?`<div class="note blue">ⓘ <div>This is the schedule sites are collecting on today. Pick a proposal above to see how the amendment would change it. ★ marks the recommended proposal, ✓ the one you have chosen.</div></div>`
-   :`<div class="card prop v-${D.verdict}"><h2>Proposal ${k} · ${D.name} <span class="pill ${v[0]}">${v[1]}</span>${chosen?'<span class="dstat accepted" style="margin-left:auto">✓ Chosen for version 2</span>':''}</h2><div class="bd">
+  const seg=`<div class="seg"><button class="${v1?'on':''}" ${h(()=>{S.view='v1'})}>Version 1 (current)</button>${Object.keys(DESIGNS).map(o=>`<button class="${!v1&&k===o?'on':''}" ${h(()=>{S.view='v2';S.schedK=o})}>Proposal ${o}${DESIGNS[o].verdict==='rec'?' ★':''}${S.design===o?' (chosen)':''}</button>`).join('')}</div>`;
+  const panel=v1?`<div class="note blue">ⓘ <div>This is the schedule sites are collecting on today. Pick a proposal above to see how the amendment would change it. ★ marks the recommended proposal.</div></div>`
+   :`<div class="card prop v-${D.verdict}"><h2>Proposal ${k} · ${D.name} <span class="pill ${v[0]}">${v[1]}</span>${chosen?'<span class="dstat accepted" style="margin-left:auto">Chosen for version 2</span>':''}</h2><div class="bd">
       <p style="margin:0 0 10px">${D.verdictWhy}</p>
       <div class="pc2"><div><label>In its favour</label><ul>${pc.pros.map(p=>`<li>${icon('ok')}<span><b>${p[0]}.</b> ${p[1]}</span></li>`).join('')||'<li class="muted">Nothing stands out.</li>'}</ul></div>
         <div><label>Against it</label><ul>${pc.cons.map(p=>`<li>${icon(p[2]==='bad'?'bad':'warn')}<span><b>${p[0]}.</b> ${p[1]}</span></li>`).join('')||'<li class="muted">No drawbacks identified.</li>'}</ul></div></div>
       <div class="decide" style="margin-top:10px">${chosen?`<button class="btn pri" ${go('sponsor','assist',{sTab:'changes'})}>Review its ${SUG.length} detailed changes ›</button>`:`<button class="btn ${D.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose Proposal ${k} for version 2</button>`}
         <a ${go('sponsor','assist',{sTab:'options'})}>Compare all four side by side ›</a>
-        <span class="legend" style="margin-left:auto"><span><span class="chk">✓</span> Unchanged</span><span><span class="plus">+</span> Accepted</span><span><span class="plus pending">+</span> Proposed</span><span><span class="bolt">⚡</span> PK subgroup only</span><span><b style="color:#c0392b">?</b> Needs a decision</span></span></div></div></div>`;
+        <span class="legend" style="margin-left:auto"><span><span class="chk">●</span> Unchanged</span><span><span class="plus">+</span> Accepted</span><span><span class="plus pending">+</span> Proposed</span><span><span class="bolt">⚡</span> PK subgroup only</span><span><b style="color:#c0392b">?</b> Needs a decision</span></span></div></div></div>`;
   return `<div class="ph"><h1>Schedule</h1>${seg}</div>${panel}${scheduleGrid(k)}<div style="margin-top:16px">${askBox('sponsor')}</div>`;
 }
 
@@ -80,7 +80,7 @@ function planTable(st,edit){ const pl=sitePlan(st);
   return pl.aff.map(p=>{ const x=p.x, open=S.open['pl'+x.id]!==false, ok=S.plan[x.id];
     return `<div class="card plan"><h2 style="cursor:pointer" ${h(()=>{S.open['pl'+x.id]=!open})}>${open?'▾':'▸'} ${x.id} <span class="muted" style="font-weight:400">Study day ${x.d} · ${p.up.length} new sample(s) to schedule · next ${fdt(p.next.book)}</span>
         ${p.blocked?'<span class="pill dec">Blocked: consent v2.0 not signed</span>':''}${p.up.some(r=>r.fixed)?'<span class="pill med">Weekend sample</span>':''}
-        <span style="margin-left:auto">${ok?`<span class="dstat accepted">✓ Plan confirmed</span>`:edit?`<button class="btn sm pri" ${h(e=>{e.stopPropagation&&e.stopPropagation();S.plan[x.id]={by:me().n,at:now()};log(`Transition plan confirmed for ${x.id}: ${p.up.length} new sample(s), first ${fd(p.next.book)}`,st.id);})}>Confirm plan</button>`:'<span class="muted">Not yet confirmed by the site</span>'}</span></h2>
+        <span style="margin-left:auto">${ok?`<span class="dstat accepted">Plan confirmed</span>`:edit?`<button class="btn sm pri" ${h(e=>{e.stopPropagation&&e.stopPropagation();S.plan[x.id]={by:me().n,at:now()};log(`Transition plan confirmed for ${x.id}: ${p.up.length} new sample(s), first ${fd(p.next.book)}`,st.id);})}>Confirm plan</button>`:'<span class="muted">Not yet confirmed by the site</span>'}</span></h2>
       ${open?`<div class="bd"><p style="margin:0 0 10px"><b>Recommended handling.</b> ${handling(p)}${p.blocked?` <b style="color:var(--red)">Consent first:</b> the PK substudy consent form (v2.0) must be signed before ${fdt(p.next.book)}.`:''}</p>
         <table class="v"><tr><th>Sample</th><th>Was in version 1</th><th>Now in version 2</th><th>Nominal date and time</th><th>Window</th><th>Suggested booking</th><th>Enter in EDC as</th><th>Status</th></tr>
         ${p.rows.map(r=>`<tr class="${r.past?'dim':''}"><td class="nw"><b>Day ${r.t.day}</b> · ${r.hrs} h after ${r.t.d>=70?'6th':'1st'} dose</td><td class="muted">Not collected</td><td>PK blood sample</td>

@@ -223,7 +223,7 @@ function ackItems(s){ const r=k=>!!S.read[s.id+k]; return [
 let H=[]; const h=fn=>{H.push(fn);return `data-h="${H.length-1}"`};
 const icon=k=>`<span class="ic ${k}">${{ok:'✓',wait:'',warn:'!',bad:'✕'}[k]}</span>`;
 const confPill=c=>({high:'<span class="pill high">High</span>',med:'<span class="pill med">Medium</span>',dec:'<span class="pill dec">Needs decision</span>'}[c]);
-const decTxt=d=>({accepted:'✓ Accepted',rejected:'✕ Rejected',pending:'— Pending'}[d]);
+const decTxt=d=>({accepted:'Accepted',rejected:'Rejected',pending:'Pending'}[d]);
 function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);return false;}
 const na=()=>h(()=>toast('Not part of this demo'));
 const go=(role,page,more)=>h(()=>{nav(role,page,more)});
@@ -290,7 +290,7 @@ function chrome(body){
 }
 function side(){
   const r=S.role, p=S.pg[r], it=(l,pg,extra='')=>`<div class="it ${pg?(p===pg||(pg==='rollout'&&p==='site')?'on':''):'off'}" ${pg?go(r,pg):''}>${l}${extra}</div>`;
-  if(r==='sponsor') return `<aside><h4>Study Design</h4>${it('Schedule','schedule')}${it(`Audit (${SUG.length-reviewed()})`,'assist','<span class="new">NEW</span>')}${it(`AI Record${trustNums().wait?' ('+trustNums().wait+' waiting)':''}`,'trust')}${it('Compare Versions','compare')}${it(`Change Requests (${openCR()})`,'feedback')}${it('Settings','settings')}${it('Review Plans (4)','plans')}
+  if(r==='sponsor') return `<aside><h4>Study Design</h4>${it('Schedule','schedule')}${it(`Audit (${SUG.length-reviewed()})`,'assist')}${it(`AI Record${trustNums().wait?' ('+trustNums().wait+' waiting)':''}`,'trust')}${it('Compare Versions','compare')}${it(`Change Requests (${openCR()})`,'feedback')}${it('Settings','settings')}${it('Review Plans (4)','plans')}
     <hr><h4>Study Objects</h4>${it('Event Groups (4)','groups')}${it(`Events (${11+EV.filter(e=>e.sug&&acc(e.sug)).length})`,'events')}${it('Forms (18)','forms')}${it('Codelists (42)','codelists')}
     <hr><h4>Rules</h4>${it('Comparison Rules (7)','crules')}${it(`User Defined Rules (${39+SUG.filter(s=>acc(s.id)&&s.diff.some(d=>d[0]==='Rule'&&d[2]==='Added')).length})`,'urules')}
     <hr><h4>Reference</h4>${it('Protocol Ver. 1.1','protocol')}${it('Audit Trail','audit')}</aside>`;
@@ -336,7 +336,7 @@ function scheduleGrid(kk){
   const win=e=>e.ps?'<span title="Sample-time checks">⏱</span>':e.h48?(pv||OK('win48')?'±1h':ST('win48')==='pending'?q:'—'):e.gap?(pv?q:({pm1:'±1',exact:'0',open:'—'}[OK('winGap')&&S.opt[rid('winGap')]]||(ST('winGap')==='rejected'?'—':q))):e.tp&&ST('winDay')==='rejected'?'—':e.win;
   const rowsAt={V2:3,V7:3,V8:1}, plus=s2=>`<span class="plus ${s2==='rejected'?'rejected':s2==='accepted'?'':'pending'}">+</span>`;
   const body=FORMS.map(([c,l,evs])=>`<tr><td class="name"><a>${c}</a></td><td class="name">${l}</td>${cols.map((e,i)=>{ const on=e.ps?c==='PK':evs.includes(e.id), s1=stE(e), f=has('form')?ST('form'):s1;
-    const cell=!on?'':nw(e)?plus(f==='rejected'||s1==='rejected'?'rejected':s1==='accepted'&&f==='accepted'?'accepted':'pending'):`<span class="chk">✓</span>${v2&&D.kind==='rows'&&c==='PK'&&rowsAt[e.id]?` <a class="rp ${ST('cont')}" title="Repeating: ${rowsAt[e.id]} extra row(s)">+${rowsAt[e.id]}</a>`:''}`;
+    const cell=!on?'':nw(e)?plus(f==='rejected'||s1==='rejected'?'rejected':s1==='accepted'&&f==='accepted'?'accepted':'pending'):`<span class="chk">●</span>${v2&&D.kind==='rows'&&c==='PK'&&rowsAt[e.id]?` <a class="rp ${ST('cont')}" title="Repeating: ${rowsAt[e.id]} extra row(s)">+${rowsAt[e.id]}</a>`:''}`;
     return `<td class="c ${nw(e)?s1:''}${gs(e,i)}">${cell}</td>`}).join('')}</tr>`).join('');
   return `<div class="schedwrap"><table class="sched">
     <tr><th colspan="2" style="vertical-align:bottom;text-align:left;padding:0 0 6px;font-weight:normal" class="muted">${v2?(pv?`Proposal ${k}, shown as proposed.<br>Nothing here is decided yet.`:`Proposal ${k}, following your decisions.<br>Click a new item to open its change.`):'Casebook version 1, active in production.'}</th>${head}</tr>
@@ -395,7 +395,7 @@ function fastSponsor(){ if(!S.design) applyDesign('A',true); S.ret=null; SUG.for
   S.signed={by:'Elena Marsh',at:now(),meaning:'Approval'}; log('Casebook version 2 approved by electronic signature (Approval)','',m); }
 function vAssist(){
   const s=sug(S.sel), d=S.dec[s.id], hi=SUG.filter(x=>x.conf==='high'&&S.dec[x.id]==='pending').length, lock=!!S.signed, all=reviewed()===SUG.length;
-  const head=`<div class="ph"><div><h1>Audit <span class="new" style="vertical-align:3px">NEW</span></h1><div class="sub">Protocol Ver. 1.1 (16 May 2017) compared with casebook version 1 · ${SUG.length} suggested changes · each one cites the protocol text it came from${S.design?` · <b>Schema option ${S.design}</b>: ${DES().name}`:''}</div></div>
+  const head=`<div class="ph"><div><h1>Audit</h1><div class="sub">Protocol Ver. 1.1 (16 May 2017) compared with casebook version 1 · ${SUG.length} suggested changes · each one cites the protocol text it came from${S.design?` · <b>Schema option ${S.design}</b>: ${DES().name}`:''}</div></div>
     ${lock?'<span class="pill solid">CASEBOOK V2 APPROVED</span>':'<span class="pill blue">IN REVIEW</span>'}
     <div class="acts"><button class="btn" ${h(()=>openPdf(44))}>View Protocol</button>${lock?'':`<button class="btn pri" ${h(()=>{S.sTab='approve'})}>Approve Casebook v2…</button>`}</div></div>
     ${S.ret?`<div class="note" style="background:var(--red-soft);border-color:#eab8b0">${icon('bad')}<div><b>Returned for rework (${S.ret}).</b> ${(S.cr.find(c=>c.id===S.ret)||{}).problem||''} Approval is blocked until the request is resolved. <a ${go('sponsor','feedback')}>Open change requests ›</a></div></div>`:''}
@@ -431,8 +431,8 @@ function vAssist(){
     <div class="sec"><label>Reviewer notes</label>${S.why[s.id]?`<div class="note" style="margin-bottom:6px">${icon('bad')}<div>${S.why[s.id]}</div></div>`:''}
       ${(S.cm[s.id]||[]).map(c=>`<div style="margin-bottom:5px"><b>${c.u}</b> <span class="muted">${c.at}</span> · ${c.x}</div>`).join('')}
       <div style="display:flex;gap:8px"><input id="cmin" style="flex:1;padding:5px 8px;border:1px solid #bbb;border-radius:2px" placeholder="Add a note for other reviewers…"><button class="btn sm" ${h(()=>{const v=$('cmin').value.trim(); if(!v) return false; (S.cm[s.id]=S.cm[s.id]||[]).push({u:me().n,at:now(),x:v.replace(/</g,'&lt;')}); log(`Note on ${s.id}: “${v.slice(0,80)}”`,'',null,{sug:s.id});})}>Add note</button></div></div>
-    ${lock?'':`<div class="decide"><button class="btn ${d==='accepted'?'ok':'pri'}" ${need?'disabled':decide('accepted')}>${d==='accepted'?'✓ Accepted':'Accept'}</button>
-      <button class="btn" ${h(()=>rejectModal(s))}>${d==='rejected'?'✕ Rejected':'Reject…'}</button>${d!=='pending'?`<a ${decide('pending')}>Undo</a>`:''}
+    ${lock?'':`<div class="decide"><button class="btn ${d==='accepted'?'ok':'pri'}" ${need?'disabled':decide('accepted')}>${d==='accepted'?'Accepted':'Accept'}</button>
+      <button class="btn" ${h(()=>rejectModal(s))}>${d==='rejected'?'Rejected':'Reject…'}</button>${d!=='pending'?`<a ${decide('pending')}>Undo</a>`:''}
       ${need?'<span class="muted">Choose an option above to accept.</span>':''}
       <a style="margin-left:auto" ${h(()=>{S.sel=SUG[(SUG.indexOf(s)+1)%SUG.length].id})}>Next ›</a></div>`}
   </div></div></div>`;
@@ -492,7 +492,7 @@ function vRollout(){
       ${S.signed?`<button class="btn" ${h(()=>crModal({about:`Casebook v2 (Option ${DES().k}) rollout`,title:'Return to sponsor',intro:Object.keys(S.dep).length?'Version 2 is already active at some sites, so this raises a change request without withdrawing the approval.':'Use this when version 2 should not go to sites as approved. The sponsor approval is withdrawn until the request is resolved.',to:['Sponsor study build team'],ret:!Object.keys(S.dep).length,after:()=>{ if(!Object.keys(S.dep).length){S.signed=null;S.val=null;log('Sponsor approval withdrawn: casebook version 2 returned by the CRO');} }}))}>Return to sponsor…</button>`:''}
       <button class="btn" ${wait.length?h(()=>{wait.forEach(s=>{S.note[s.id]=now();log('Reminder sent: please review and acknowledge casebook version 2',s.id);});return toast(`Reminder sent to ${wait.length} site(s) in Site Connect`)&&false;}):'disabled'}>Notify Site${wait.length?` (${wait.length})`:''}</button></div></div>
   ${needSponsor()}
-  <div class="note blue">ⓘ <div>A site can move to version 2 only after its EC has approved Protocol Ver. 1.1. ${pkOnly()?'New PK samples apply only to the Mainland China PK subgroup, so sites in South Korea and Taiwan receive version 2 with no change in data entry.':'With the option the sponsor chose, the new PK visits are created for every participant at every site.'} Site names are the study’s real locations from ClinicalTrials.gov; staff, subjects and statuses are simulated.</div></div>
+  
   <div class="bar"><span class="muted">Status:</span><div class="seg">${[['','All ('+SITES.length+')'],['China','China'],['South Korea','South Korea'],['Taiwan','Taiwan'],['held','Held for EC'],['wait','Awaiting acknowledgement']].map(f=>`<button class="${S.cf===f[0]?'on':''}" ${h(()=>{S.cf=f[0]})}>${f[1]}</button>`).join('')}</div><span class="sp muted">${shown.length} of ${SITES.length} sites · ${total(s=>s.subs.length)} subjects</span></div>
   <table class="v"><tr><th><input type="checkbox" title="Select all eligible" ${selAll.length&&selAll.every(s=>S.pick[s.id])?'checked':''} ${selAll.length?h((e,el)=>{selAll.forEach(s=>S.pick[s.id]=el.checked)}):'disabled'}></th><th>Site Number</th><th style="min-width:260px">Site Name</th><th>Study Country</th><th>Principal Investigator</th><th>EC approval (Ver. 1.1)</th><th>Active Version</th><th>Subjects</th><th>Gain PK visits</th><th>Due ≤ 3 days</th><th>Site acknowledgement</th></tr>${rows}</table>`;
 }

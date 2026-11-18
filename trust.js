@@ -128,7 +128,7 @@ function vTrust(){ const n=trustNums(), f=S.tf||'all', sc=S.role==='site', kids=
       <td>${a.k==='ai'?'Protocol '+a.src.map(p=>'p. '+p).join(', '):'Fixed rule, shown in the record'}<div class="muted">${a.checks.length-bad} check(s) passed${bad?`, <b style="color:var(--amber)">${bad} flagged</b>`:''}</div></td><td>${rv(a.rev)}</td></tr>`;
     if(a.kids) rows+=`<tr class="kidh"><td></td><td colspan="4"><a ${h(()=>{S.tk=!kids})}>${kids?'▾ Hide':'▸ Show'} the ${SUG.length} changes</a></td></tr>`+(kids?SUG.filter(s=>f!=='wait'||S.dec[s.id]==='pending').map(s=>{const b=basis(s),by=decidedBy(s);
       return `<tr class="click kid" ${h(()=>changeCard(s.id))}><td></td><td><a>${s.id}</a> ${s.title}</td><td class="nw"><span class="pill ${b[0]}">${b[1]}</span></td><td>${s.ev?'Protocol '+srcPages(s).map(p=>'p. '+p).join(', '):'No protocol text'}<div class="muted">${testLine(s)}</div></td>
-        <td>${by?`${icon(S.dec[s.id]==='accepted'?'ok':'bad')} ${decTxt(S.dec[s.id]).slice(2)} · ${by}`:`${icon('wait')} Waiting for the sponsor`}</td></tr>`;}).join(''):''); });
+        <td>${by?`${icon(S.dec[s.id]==='accepted'?'ok':'bad')} ${decTxt(S.dec[s.id])} · ${by}`:`${icon('wait')} Waiting for the sponsor`}</td></tr>`;}).join(''):''); });
   const body=`<div class="tiles4">
       <div><b>${n.ai}</b><span>items drafted by AI</span></div><div><b>${n.calc}</b><span>calculated by a fixed rule</span></div>
       <div><b>${n.done} of ${n.need}</b><span>automated steps reviewed by a named person</span></div><div class="${n.wait?'w':''}"><b>${n.wait}</b><span>waiting for a person</span></div>
