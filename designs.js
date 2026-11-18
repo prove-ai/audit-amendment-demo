@@ -90,7 +90,7 @@ const r1=(...rs)=>rs.map(rid).find(Boolean)||SUG[0].id;
 function applyDesign(k,quiet){ const d=DESIGNS[k]; S.design=k; S.schedK=k; SUG.length=0; d.list().forEach(s=>SUG.push(s));
   S.dec={}; S.opt={}; S.why={}; SUG.forEach(s=>S.dec[s.id]='pending'); S.val=null; S.sel=SUG[0].id;
   TPS.forEach(e=>e.sug=d.kind==='events'?e.sugA:rid('cont'));
-  if(!quiet) log(`Schema option ${k} chosen: ${d.name}`); }
+  log(`Schema option ${k} chosen: ${d.name}`,'',quiet?ME.sponsor:null); aiLog(`Drafted ${SUG.length} schema changes for Option ${k} (AI-03). Draft only: each one waits for a person’s decision`,'',{p:44}); }
 
 /* ---------- option cards, map ---------- */
 function dia(k){ const n=(t,c)=>`<span class="${c||''}">${t}</span>`, g='new', d=DESIGNS[k];

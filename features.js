@@ -42,11 +42,9 @@ function tasksTable(s,edit){
 }
 /* read-only card for a change, usable from any role */
 function changeCard(id){ const s=sug(id); if(!s) return toast(id+' belonged to a schema option that is no longer selected');
-  $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:760px"><h2>${s.id} ${confPill(s.conf)} <span class="dstat ${S.dec[s.id]}">${decTxt(S.dec[s.id])}</span><a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
-    <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type}</div>
-    <div class="sec"><label>Change</label><div class="ba"><div><small>Casebook v1</small>${s.before}</div><i>→</i><div class="after"><small>Casebook v2</small>${s.after}</div></div></div>
-    <div class="sec"><label>Protocol evidence</label>${evidence(s)}</div><div class="sec"><label>Why</label>${s.why}</div>
-    ${S.why[id]?`<div class="sec"><label>Reviewer note</label>${S.why[id]}</div>`:''}</div></div></div>`; return false; }
+  $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:860px"><h2>${s.id} ${confPill(s.conf)} <span class="dstat ${S.dec[s.id]}">${decTxt(S.dec[s.id])}</span><a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
+    <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type} · <span class="assist">✦ Drafted by AI</span></div>
+    ${trustRecord(s)}</div></div></div>`; return false; }
 
 /* ================= Messages (site ⇄ CRO) ================= */
 function thread(s){ const l=S.msg[s.id]||[], site=S.role==='site';
@@ -143,20 +141,20 @@ const fnv=s=>{let a=0x811c9dc5,b=0x1000193;for(let i=0;i<s.length;i++){a^=s.char
 function chain(){ let prev='0'.repeat(16); const l=S.log.slice().reverse(); l.forEach((e,i)=>{e.seq=i+1;e.hash=fnv(prev+e.t+e.u+e.o+e.s+e.x);prev=e.hash;}); return l.reverse(); }
 function auditRows(f){ const a=S.af, q=a.q.toLowerCase();
   const l=chain().filter(f||(()=>true)).filter(e=>(!a.org||e.o.startsWith(a.org))&&(!a.site||e.s===a.site)&&(!q||(e.x+e.u+e.s).toLowerCase().includes(q)));
-  return l.map(e=>`<tr><td class="r muted">${e.seq}</td><td class="nw muted">${e.t}</td><td class="nw">${e.u}</td><td class="nw">${e.o}</td><td class="nw">${e.s||'—'}</td><td>${e.x}</td>
-    <td class="nw">${e.ref&&e.ref.sug?`<a ${h(()=>changeCard(e.ref.sug))}>${e.ref.sug}</a>`:e.ref&&e.ref.p?`<a ${h(()=>openPdf(e.ref.p))}>p. ${e.ref.p}</a>`:'<span class="muted">—</span>'}</td><td><code title="Chained to the previous entry">${e.hash.slice(0,10)}</code></td></tr>`).join('')||'<tr><td colspan="8" class="muted">No entries match.</td></tr>'; }
+  return l.map(e=>`<tr><td class="r muted">${e.seq}</td><td class="nw muted">${e.t}</td><td class="nw">${e.o==='AI'?kindPill('ai'):e.u==='System'?kindPill('calc'):'<span class="kind person">Person</span>'}</td><td class="nw">${e.u}</td><td class="nw">${e.o}</td><td class="nw">${e.s||'—'}</td><td>${e.x}</td>
+    <td class="nw">${e.ref&&e.ref.sug?`<a ${h(()=>changeCard(e.ref.sug))}>${e.ref.sug}</a>`:e.ref&&e.ref.p?`<a ${h(()=>openPdf(e.ref.p))}>p. ${e.ref.p}</a>`:'<span class="muted">—</span>'}</td><td><code title="Chained to the previous entry">${e.hash.slice(0,10)}</code></td></tr>`).join('')||'<tr><td colspan="9" class="muted">No entries match.</td></tr>'; }
 function auditTable(f,noFilter){ const a=S.af; window._af=f;
   return `${noFilter?'':`<div class="bar"><input id="afq" value="${a.q}" placeholder="Filter by text, user or subject…" style="padding:5px 8px;border:1px solid #bbb;border-radius:2px;width:280px">
-    <select id="afo" style="padding:5px">${['','Sponsor','CRO','Site','Vault'].map(o=>`<option value="${o}" ${a.org===o?'selected':''}>${o||'All organisations'}</option>`).join('')}</select>
+    <select id="afo" style="padding:5px">${['','AI','Sponsor','CRO','Site','Vault'].map(o=>`<option value="${o}" ${a.org===o?'selected':''}>${o==='AI'?'AI (assistant)':o==='Vault'?'System (calculated)':o||'Everyone'}</option>`).join('')}</select>
     <select id="afs" style="padding:5px"><option value="">All sites</option>${SITES.map(s=>`<option ${a.site===s.id?'selected':''}>${s.id}</option>`).join('')}</select>
     <span class="sp"></span><button class="btn" ${h(()=>{chain();return toast(`Chain intact: ${S.log.length} entries, each hash covers the entry before it`)})}>Verify chain</button>
     <button class="btn" ${h(exportAudit)}>Export CSV</button></div>`}
-  <table class="v"><tr><th>#</th><th>Timestamp</th><th>User</th><th>Organisation</th><th>Site</th><th>Event</th><th>Source</th><th>Hash</th></tr><tbody id="audbody">${auditRows(f)}</tbody></table>`; }
+  <table class="v"><tr><th>#</th><th>Timestamp</th><th>Made by</th><th>User</th><th>Organisation</th><th>Site</th><th>Event</th><th>Source</th><th>Hash</th></tr><tbody id="audbody">${auditRows(f)}</tbody></table>`; }
 document.addEventListener('input',e=>{ if(e.target.id==='afq'){S.af.q=e.target.value;const b=$('audbody'); if(b) b.innerHTML=auditRows(window._af);} });
 document.addEventListener('change',e=>{ if(e.target.id==='afo'){S.af.org=e.target.value;render();} if(e.target.id==='afs'){S.af.site=e.target.value;render();} });
 function download(name,text,type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); return false; }
 function exportAudit(){ const esc=v=>`"${String(v).replace(/"/g,'""')}"`;
-  download('CTJ301UC201_amendment1_audit_trail.csv',['seq,timestamp,user,organisation,site,event,source,hash'].concat(chain().slice().reverse().map(e=>[e.seq,e.t,e.u,e.o,e.s,e.x,e.ref?(e.ref.sug||'p.'+e.ref.p):'',e.hash].map(esc).join(','))).join('\n'),'text/csv');
+  download('CTJ301UC201_amendment1_audit_trail.csv',['seq,timestamp,made_by,user,organisation,site,event,source,hash'].concat(chain().slice().reverse().map(e=>[e.seq,e.t,e.o==='AI'?'AI':e.u==='System'?'System':'Person',e.u,e.o,e.s,e.x,e.ref?(e.ref.sug||'p.'+e.ref.p):'',e.hash].map(esc).join(','))).join('\n'),'text/csv');
   return toast('Audit trail downloaded as CSV'); }
 
 /* ================= Inspection packet ================= */
@@ -177,7 +175,8 @@ function openPacket(){
       ${SITES.filter(s=>S.ack[s.id]).map(s=>`<tr><td>${s.id}: site acknowledgement</td><td>${S.ack[s.id].by}</td><td>Acknowledgement</td><td>${S.ack[s.id].at}</td></tr>`).join('')}</table>`)}
     ${sec('4. Site status',`<table class="v"><tr><th>Site</th><th>EC approval</th><th>Active version</th><th>Subjects gaining PK visits</th><th>Tasks done</th><th>Acknowledged</th></tr>${SITES.map(s=>{const t=siteTasks(s);return `<tr><td>${s.id} · ${s.name}</td><td>${s.irb||'Pending'}</td><td>${S.dep[s.id]?2:1}</td><td>${stats(s).aff}</td><td>${t.filter(q=>q.st==='done').length} of ${t.length}</td><td>${S.ack[s.id]?S.ack[s.id].at:'—'}</td></tr>`}).join('')}</table>`)}
     ${sec('5. Open items',open.length?`<ul>${open.map(o=>`<li>${o}</li>`).join('')}</ul>`:'None.')}
-    ${sec('6. Audit trail',auditTable(null,true))}</div></div></div>`; return false; }
+    ${sec('6. What was automated, and who reviewed it',`<table class="v"><tr><th>ID</th><th>Automated step</th><th>How</th><th>Checks</th><th>Reviewed by a person</th></tr>${aiActs().map(a=>`<tr><td class="nw">${a.id}</td><td>${a.t}<div class="muted">${a.out}</div></td><td class="nw">${KIND[a.k][0]}</td><td>${a.checks.filter(c=>c[0]==='ok').length} of ${a.checks.length} passed</td><td>${a.rev.ok?'✓ ':a.rev.ok===false?'Outstanding: ':''}${a.rev.txt}</td></tr>`).join('')}</table>`)}
+    ${sec('7. Audit trail',auditTable(null,true))}</div></div></div>`; return false; }
 
 /* ================= Guided walkthrough ================= */
 const needA=()=>{ if(!S.signed&&S.design!=='A') applyDesign('A',true); };
@@ -185,6 +184,7 @@ const TOUR=[
   ['Start as the sponsor, who owns the casebook design. Schema Options: four ways to build the amendment, compared side by side, with a recommendation and the reasons against the others. Choose one, or say why none fit.',()=>nav('sponsor','assist',{sTab:'options'})],
   ['Detailed changes for Option A. Here the assistant found the PK-subgroup restriction in a footnote. Click “Open protocol at p. 45” to check the source yourself.',()=>{needA();nav('sponsor','assist',{sTab:'changes',sel:r1('scope')});}],
   ['Table 1 and Section 6.2.5 disagree. The assistant does not guess; pick an option, then Accept. Reject… asks why and what to try instead.',()=>{needA();nav('sponsor','assist',{sTab:'changes',sel:r1('winGap')});}],
+  ['AI Record: every automated step across sponsor, CRO and site, labelled as an AI draft or a fixed-rule calculation, with what it was based on, how it was checked and which person reviewed it. Click any row for the full record.',()=>{needA();nav('sponsor','trust');}],
   ['Schedule: the current version beside each proposed one, with what speaks for and against it. Type a doubt into Ask Audit at the bottom.',()=>nav('sponsor','schedule',{view:'v2'})],
   ['Accept the rest (“Accept all high-confidence”), run validation, then Approve and Sign, or Reject and return with a reason.',()=>{needA();nav('sponsor','assist',{sTab:'approve'});}],
   ['CRO: the study’s 27 real sites. Most are ready; three are held until their EC approves. Tick sites and Set Active Version, record an EC approval, or return the casebook to the sponsor.',()=>nav('cro','rollout')],
@@ -192,7 +192,7 @@ const TOUR=[
   ['Site: the coordinator sees only what changes for their own participants, completes tasks with proof, and signs, or reports a problem.',()=>nav('site','changes',{mySite:'CN-101'})],
   ['Transition Plan: the new schema mapped onto each participant already in the trial, on real dates, with weekend and consent problems flagged. Confirm, or export to the site calendar.',()=>nav('site','plan',{mySite:'CN-101'})],
   ['Data Entry: the new samples exist only for PK-subgroup participants. Move the 48 h sample two hours late and submit to see the new rule open a query.',()=>nav('edc',null,{edc:{site:'CN-101',sub:'CN101-002',ev:S.design==='A'||S.design==='B'||!S.design?'V2.1':null,prev:true}})],
-  ['Everything is in one chained audit trail. Filter it, export it, or open the Inspection Packet (DRAFT until nothing is open).',()=>nav('cro','audit')],
+  ['Everything is in one chained audit trail, and each entry says whether a person, the AI or a fixed rule made it. Filter it, export it, or open the Inspection Packet (DRAFT until nothing is open).',()=>nav('cro','audit')],
 ];
 function startTour(){ S.tour=0; TOUR[0][1](); }
 function tourBar(){ if(S.tour===null) return ''; const i=S.tour, mv=n=>h(()=>{S.tour=n;TOUR[n][1]();});

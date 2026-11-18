@@ -157,7 +157,9 @@ function log(x,sid,who,ref){const m=who||me(); S.log.unshift({t:now(),u:m.n,o:m.
   add('16 Jun 2017 10:38','Amendment review opened');
   SITES.filter(s=>s.irb).reverse().forEach(s=>add(s.irb+' 09:00','EC approval of Protocol Ver. 1.1 recorded',s.id,{n:s.cra,o:'CRO'}));
   SITES.filter(s=>!s.irb).forEach(s=>add(s.sub+' 14:10','Protocol Ver. 1.1 submitted to EC',s.id,{n:s.coord,o:'Site '+s.id}));
-  S.log.push({t:'18 May 2017 08:02',u:'System',o:'Vault',s:'',ref:{p:44},x:'Audit compared Protocol Ver. 1.1 with casebook version 1 and drafted 11 suggested changes'});
+  S.log.push({t:'18 May 2017 08:06',u:'System',o:'Vault',s:'',x:'Site impact calculated from participant study days: counts per site (AI-06)'});
+  S.log.push({t:'18 May 2017 08:04',u:'Audit assistant',o:'AI',s:'',ref:{p:44},x:'Drafted four schema options (A to D) with pros, cons and a recommendation (AI-02). Draft only: nothing changes until a person decides'});
+  S.log.push({t:'18 May 2017 08:02',u:'Audit assistant',o:'AI',s:'',ref:{p:44},x:'Read Protocol Ver. 1.1 and compared it with casebook version 1: 7 new PK samples found, 1 point left for a person to decide (AI-01)'});
   if(0) add('','Audit compared Protocol Ver. 1.1 with casebook version 1 and drafted 11 suggested changes');
   add('18 May 2017 08:00','Protocol CTJ301UC201 Ver. 1.1 filed (VV-TMF-00412)','',{n:'Elena Marsh',o:'Sponsor'});
   add('06 Mar 2017 11:20','Casebook version 1 deployed to all sites','',{n:'Jordan Morgan',o:'CRO'});
@@ -285,16 +287,16 @@ function chrome(body){
   const navb=`<div class="nav">${items.map((x,i)=>`<span style="cursor:pointer" class="${i===on?'on':''}" ${sc?'':h(tabGo[i]||(()=>toast(x.replace(' ▾','')+' is outside this demo. Data Entry, Studio and Tools are live.')))}>${x}</span>`).join('')}</div>`;
   const crumbs=sc?'':`<div class="crumbs"><a ${h(openStudies)}>⌂ My Studies</a><span class="sep">›</span><a ${h(openStudy)}>CTJ301UC201 ▾</a><span class="sep">›</span><span>${r==='sponsor'?'CTJ301UC201_DEV1':r==='edc'?S.edc.site+' · Data Entry':'CTJ301UC201'}</span>
     <div class="right">${r==='sponsor'?`<span class="env dev">DEVELOPMENT</span><span>Version: <u>${S.signed?'2.0':'2.0 (draft)'}</u></span>`:`<span class="env">PRODUCTION</span><span>Latest version: <u>${S.signed?2:1}</u></span>`}</div></div>`;
-  return `${demobar}${tourBar()}<div class="ws ${sc?'sc':''}">${top}${navb}${crumbs}<div class="layout">${side()}<main>${body}</main></div></div>`;
+  return `${demobar}${tourBar()}<div class="ws ${sc?'sc':''}">${top}${navb}${crumbs}${r!=='edc'&&S.pg[r]!=='trust'?trustBar():''}<div class="layout">${side()}<main>${body}</main></div></div>`;
 }
 function side(){
   const r=S.role, p=S.pg[r], it=(l,pg,extra='')=>`<div class="it ${pg?(p===pg||(pg==='rollout'&&p==='site')?'on':''):'off'}" ${pg?go(r,pg):''}>${l}${extra}</div>`;
-  if(r==='sponsor') return `<aside><h4>Study Design</h4>${it('Schedule','schedule')}${it(`Audit (${SUG.length-reviewed()})`,'assist','<span class="new">NEW</span>')}${it('Compare Versions','compare')}${it(`Change Requests (${openCR()})`,'feedback')}${it('Settings','settings')}${it('Review Plans (4)','plans')}
+  if(r==='sponsor') return `<aside><h4>Study Design</h4>${it('Schedule','schedule')}${it(`Audit (${SUG.length-reviewed()})`,'assist','<span class="new">NEW</span>')}${it(`AI Record${trustNums().wait?' ('+trustNums().wait+' waiting)':''}`,'trust')}${it('Compare Versions','compare')}${it(`Change Requests (${openCR()})`,'feedback')}${it('Settings','settings')}${it('Review Plans (4)','plans')}
     <hr><h4>Study Objects</h4>${it('Event Groups (4)','groups')}${it(`Events (${11+EV.filter(e=>e.sug&&acc(e.sug)).length})`,'events')}${it('Forms (18)','forms')}${it('Codelists (42)','codelists')}
     <hr><h4>Rules</h4>${it('Comparison Rules (7)','crules')}${it(`User Defined Rules (${39+SUG.filter(s=>acc(s.id)&&s.diff.some(d=>d[0]==='Rule'&&d[2]==='Added')).length})`,'urules')}
     <hr><h4>Reference</h4>${it('Protocol Ver. 1.1','protocol')}${it('Audit Trail','audit')}</aside>`;
   if(r==='cro') return `<aside><h3>EDC Tools</h3><h4>Setup</h4>${it(`Study Countries (${new Set(SITES.map(s=>s.ctry)).size})`,'countries')}${it(`Sites (${SITES.length})`,'rollout')}
-    <hr><h4>Operations</h4>${it('Casebook Versions','versions')}${it(`Job History (${S.jobs.length})`,'jobs')}${it(`Change Requests (${openCR()})`,'feedback')}${it('Audit Trail','audit')}
+    <hr><h4>Operations</h4>${it(`AI Record${trustNums().wait?' ('+trustNums().wait+' waiting)':''}`,'trust')}${it('Casebook Versions','versions')}${it(`Job History (${S.jobs.length})`,'jobs')}${it(`Change Requests (${openCR()})`,'feedback')}${it('Audit Trail','audit')}
     <hr><h4>Reference</h4>${it('Protocol Ver. 1.1','protocol')}</aside>`;
   if(r==='edc'){ const st=site(S.edc.site); return `<aside><h3>${st.id} Subjects</h3>${st.subs.map(x=>`<div class="it ${S.edc.sub===x.id?'on':''}" ${h(()=>{S.edc.sub=x.id;S.edc.ev=null})}>${x.id}${x.pk===true?' <span class="new" style="background:var(--blue)">PK</span>':''}</div>`).join('')}
     <hr><h4>Site</h4>${SITES.map(q=>`<div class="it ${q.id===st.id?'on':''}" ${h(()=>{S.edc={site:q.id,sub:null,ev:null,prev:S.edc.prev}})}>${q.id}</div>`).join('')}</aside>`; }
@@ -302,7 +304,7 @@ function side(){
   return `<aside><label>Study</label><select id="mysite">${SITES.map(x=>`<option value="${x.id}" ${x.id===s.id?'selected':''}>CTJ301UC201 &gt; Site ${x.id}</option>`).join('')}</select>
     <div class="proto"><a ${h(()=>openDoc(s,siteDocs(s)[0]))}>▤ Study Protocol</a></div>
     ${si('ⓘ','Study Information','info')}${si('⊞','System Links','links')}${si('☏','Study Contacts','contacts')}${si('✉','Communications','comms',dot(!S.ack[s.id]||unseen(s,true)))}
-    ${si('▤','Document Exchange','docs',dot(unread(s)||(S.dep[s.id]&&!tasksDone(s))))}${si('✦','Amendment Changes','changes',dot(!S.ack[s.id]))}${si('⇄','Transition Plan','plan',dot(!planDone(s)))}${si('⚙','Study Admin','admin')}</aside>`;
+    ${si('▤','Document Exchange','docs',dot(unread(s)||(S.dep[s.id]&&!tasksDone(s))))}${si('✦','Amendment Changes','changes',dot(!S.ack[s.id]))}${si('⇄','Transition Plan','plan',dot(!planDone(s)))}${si('◈','AI Record','trust')}${si('⚙','Study Admin','admin')}</aside>`;
 }
 
 /* ================= Shared pieces ================= */
@@ -426,7 +428,7 @@ function vAssist(){
     <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type} · <span class="assist">✦ Suggested by Audit</span></div>
     <div class="sec"><label>Proposed change</label><div class="ba"><div><small>Casebook v1 (current)</small>${s.before}</div><i>→</i><div class="after"><small>Casebook v2 (proposed)</small>${s.after}</div></div>${s.rule?`<pre class="rule">${s.rule}</pre>`:''}</div>
     <div class="sec"><label>Protocol evidence</label>${evidence(s)}</div>
-    <div class="sec"><label>Why this is suggested</label>${s.why}</div>${who}${opts}
+    <div class="sec"><label>Why this is suggested</label>${s.why}</div>${trustBrief(s)}${who}${opts}
     <div class="sec"><label>Reviewer notes</label>${S.why[s.id]?`<div class="note" style="margin-bottom:6px">${icon('bad')}<div>${S.why[s.id]}</div></div>`:''}
       ${(S.cm[s.id]||[]).map(c=>`<div style="margin-bottom:5px"><b>${c.u}</b> <span class="muted">${c.at}</span> · ${c.x}</div>`).join('')}
       <div style="display:flex;gap:8px"><input id="cmin" style="flex:1;padding:5px 8px;border:1px solid #bbb;border-radius:2px" placeholder="Add a note for other reviewers…"><button class="btn sm" ${h(()=>{const v=$('cmin').value.trim(); if(!v) return false; (S.cm[s.id]=S.cm[s.id]||[]).push({u:me().n,at:now(),x:v.replace(/</g,'&lt;')}); log(`Note on ${s.id}: “${v.slice(0,80)}”`,'',null,{sug:s.id});})}>Add note</button></div></div>
@@ -471,7 +473,7 @@ const vCompare=()=>`<div class="ph"><div><h1>Compare Versions</h1><div class="su
 const vAudit=(f,sub)=>`<div class="ph"><div><h1>Audit Trail</h1><div class="sub">${sub||'Every decision, validation, signature, deployment, task and query for this amendment, across sponsor, CRO and sites. Each entry is chained to the one before it.'}</div></div><div class="acts"><button class="btn" ${h(openPacket)}>Inspection Packet</button></div></div>${auditTable(f)}`;
 
 /* ================= CRO (EDC Tools) ================= */
-function deploy(ids,m){ const at=now(); ids.forEach(id=>{S.dep[id]={at};S.pick[id]=false;log('Casebook version 2 set as active version (prospective amendment)',id,m);});
+function deploy(ids,m){ const at=now(); ids.forEach(id=>{S.dep[id]={at};S.pick[id]=false;log('Casebook version 2 set as active version (prospective amendment)',id,m); const k=sitePlan(site(id)).aff.length; if(k) log(`Transition plan calculated for ${k} participant(s) from their dose dates (AI-09)`,id,{n:'System',o:'Vault'});});
   S.jobs.unshift({at,ids,by:(m||me()).n}); }
 function fastDeploy(){ if(!S.signed) fastSponsor(); deploy(SITES.filter(s=>eligible(s)&&!S.dep[s.id]).map(s=>s.id),{n:'Jordan Morgan',o:'CRO'}); }
 const needSponsor=()=>S.signed?'':`<div class="note">${icon('warn')}<div>${S.ret?`<b>Returned to the sponsor (${S.ret}).</b> `:''}Casebook version 2 has not been approved by the sponsor yet, so it cannot be activated at sites. You can still review impact below. <a ${go('sponsor','assist')}>Open sponsor view ›</a> · <a ${h(fastSponsor)}>Demo shortcut: complete the sponsor step</a></div></div>`;
@@ -646,20 +648,25 @@ function vHome(){
     ['site','3. Site acknowledges','See what changes for your own participants, complete readiness tasks with proof, and sign, or report a problem.',`${nAck} site(s) acknowledged`]];
   const FAQ=[['Who is this for?','Sponsor data managers who own the casebook design, CRO site managers who roll changes out, and site coordinators who have to work with the result. Each gets a workspace that looks like the Veeva application they already use.'],
     ['What does the assistant actually do?','It compares the amended protocol with the current casebook, proposes several ways to build the change with pros and cons, drafts the detailed schema changes for the option you pick, and cites the protocol page behind each one. People make every decision; nothing changes until someone signs.'],
+    ['Who makes the schema update?','The sponsor owns the casebook. Its data management team, or the CRO’s on its behalf, builds the new version, tests it and signs it off. The CRO moves each site onto it once that site’s ethics committee has approved the amended protocol. Sites do not build anything: they apply the new version to their own participants and confirm they are ready.'],
+    ['How do I know the AI got it right?','Open the AI Record in any workspace. It lists every automated step and, for each schema change, the protocol page, the test cases, the assistant’s own doubt and the person who reviewed it. Steps that are plain calculations show their rule so you can redo them by hand.'],
     ['What if a proposed change is wrong?','Any reviewer can reject it. The sponsor can reject a single change, a whole option, or the draft; the CRO can return it to the sponsor; a site can report that it cannot work as described. Each rejection asks what does not work and what to try instead, and lands in a shared Change Requests list.'],
     ['What data is in the demo?',`The study record and all ${SITES.length} sites are real, from ClinicalTrials.gov (${g.nct}). The protocol is the real public PDF. Staff, participants, dates and the rollout are simulated, and the assistant’s suggestions are scripted.`],
     ['How do I present it quickly?',`Use the walkthrough for a guided tour, or skip ahead: <a ${h(()=>{fastSponsor();toast('Sponsor step completed')})}>complete the sponsor step</a> · <a ${h(()=>{fastDeploy();toast('Sponsor and CRO steps completed')})}>complete sponsor and CRO steps</a> · <a ${h(openPacket)}>open the inspection packet</a>. The three workspaces share one state, so what you do in one shows up in the others.`]];
   return `<div class="lp">
-  <section class="lp-hero"><header class="lp-nav"><a class="lp-brand">${BRAND(25)}</a><nav><a ${scrollTo('how')}>How it works</a><a ${scrollTo('study')}>The study</a><a ${scrollTo('faq')}>FAQs</a><button class="btn org" ${toSignIn(null,'login')}>Open workspace →</button></nav></header>
+  <section class="lp-hero"><header class="lp-nav"><a class="lp-brand">${BRAND(25)}</a><nav><a ${scrollTo('trust')}>Why trust it</a><a ${scrollTo('how')}>How it works</a><a ${scrollTo('study')}>The study</a><a ${scrollTo('faq')}>FAQs</a><button class="btn org" ${toSignIn(null,'login')}>Open workspace →</button></nav></header>
     <div class="lp-hero-in">
       <h1>From protocol amendment<br>to a clean handoff.</h1>
-      <p>When a protocol changes, the casebook has to change at every site. See what to change, why, and who has signed.</p>
+      <p>AI drafts the casebook update. Every change arrives with its source page, its test results, its doubts and the name of the person who signed for it.</p>
       <div class="lp-cta"><button class="btn org" ${toSignIn(null,'login')}>Open your workspace →</button><button class="btn ghost" ${h(startTour)}>▶ Take the walkthrough <span>2 min</span></button></div>
       <span class="lp-aud">For sponsors, CROs and site teams.</span></div></section>
   <section class="lp-benefits"><div class="hw">
-    <article><b>Every change cites the protocol</b><p>Each proposed schema change sits beside the page it came from, so reviewers check the source instead of trusting a summary.</p></article>
+    <article><b>Nothing rests on the AI’s word</b><p>Each AI draft shows where it came from, how it was tested and what it is unsure of. It changes nothing until a named person accepts it.</p></article>
     <article><b>Options, not a single answer</b><p>Four ways to build the change, compared on what matters, with a recommendation and the reasons against the others.</p></article>
     <article><b>A handoff everyone can follow</b><p>Sponsor, CRO and site each sign for their part, and one audit trail shows who decided what, and why.</p></article></div></section>
+  <section class="lp-sec alt" id="trust"><div class="hw"><span class="lp-eye">The AI Record</span><h2>How do I trust what the AI built?</h2><p class="lp-sub">You should not have to. Every automated step, for sponsor, CRO and site, carries the same five answers, in plain words.</p>
+    <div class="lp-steps five">${[['1','Where it came from','The protocol page, opened beside the change. If it is not in the protocol, it says so.'],['2','What was done','A plain-language account of the change, with the casebook before and after.'],['3','How it was tested','Test cases on made-up participants. Try the same case yourself in Data Entry.'],['4','What it is unsure of','Where the protocol is unclear the assistant does not choose. A person does.'],['5','Who signed for it','Name, organisation and time for every accept, reject and signature.']].map(x=>`<article><i>${x[0]}</i><h3>${x[1]}</h3><p>${x[2]}</p></article>`).join('')}</div>
+    <p class="lp-sub" style="margin:28px 0 0">AI drafts and fixed-rule calculations are labelled differently, because only one of them can be wrong in a way you cannot recompute. <a ${h(()=>nav('sponsor','trust'))}><b>Open the AI Record →</b></a></p></div></section>
   <section class="lp-sec" id="how"><div class="hw"><span class="lp-eye">One amendment. Three sign-offs.</span><h2>How it works</h2><p class="lp-sub">Each role works in its own workspace. The amendment moves on only when the previous party has signed.</p>
     <div class="lp-steps">${P.map(p=>`<article><h3>${p[1]}</h3><p>${p[2]}</p><span class="lp-st">${p[3]}</span><a ${toSignIn(p[0],'login')}>Log in as ${ROLES[p[0]][0]} →</a></article>`).join('')}</div></div></section>
   <section class="lp-sec alt" id="study"><div class="hw"><span class="lp-eye">Real public study data</span><h2>The study in this demo</h2>
@@ -675,9 +682,9 @@ function vHome(){
 }
 
 /* ================= Router ================= */
-const VIEWS={edc:{main:()=>vEdc()},sponsor:Object.assign({feedback:()=>vFeedback(),assist:vAssist,schedule:vSchedule,compare:vCompare,protocol:protocolPage,audit:()=>vAudit()},Object.fromEntries(['settings','plans','groups','events','forms','codelists','crules','urules'].map(k=>[k,()=>vObjects(k)]))),
-  cro:{feedback:()=>vFeedback(),countries:()=>vCountries(),rollout:vRollout,site:vCroSite,versions:vVersions,jobs:vJobs,protocol:protocolPage,audit:()=>vAudit()},
-  site:{plan:()=>vSitePlan(),changes:vSiteChanges,comms:vSiteComms,docs:vSiteDocs,links:vSiteLinks,contacts:vSiteContacts,info:vSiteInfo,admin:vSiteAdmin}};
+const VIEWS={edc:{main:()=>vEdc()},sponsor:Object.assign({trust:()=>vTrust(),feedback:()=>vFeedback(),assist:vAssist,schedule:vSchedule,compare:vCompare,protocol:protocolPage,audit:()=>vAudit()},Object.fromEntries(['settings','plans','groups','events','forms','codelists','crules','urules'].map(k=>[k,()=>vObjects(k)]))),
+  cro:{trust:()=>vTrust(),feedback:()=>vFeedback(),countries:()=>vCountries(),rollout:vRollout,site:vCroSite,versions:vVersions,jobs:vJobs,protocol:protocolPage,audit:()=>vAudit()},
+  site:{trust:()=>vTrust(),plan:()=>vSitePlan(),changes:vSiteChanges,comms:vSiteComms,docs:vSiteDocs,links:vSiteLinks,contacts:vSiteContacts,info:vSiteInfo,admin:vSiteAdmin}};
 function render(){ if(!$('layer').innerHTML) H=[]; const r=S.role;
   $('app').innerHTML=chrome(r==='home'?vHome():VIEWS[r][S.pg[r]]());
   try{ history.replaceState(null,'','#'+(r==='home'?(S.home==='signin'?'signin':''):[r,S.pg[r],r==='cro'?S.croSite:r==='site'?S.mySite:r==='edc'?S.edc.site:S.sTab,r==='cro'?S.siteTab:''].filter(Boolean).join('/'))); }catch(e){}
