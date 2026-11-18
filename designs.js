@@ -97,7 +97,7 @@ function dia(k){ const n=(t,c)=>`<span class="${c||''}">${t}</span>`, g='new', d
   const body=d.kind==='events'?`${n('V2')}${n('V2.1',g)}${n('V2.2',g)}${n('V2.3',g)}${n('V3–V6')}${n('V7')}${n('V7.1',g)}${n('V7.2',g)}${n('V7.3',g)}${n('V8')}${n('V8.1',g)}${n('V9')}`
     :d.kind==='rows'?`${n('V2 <b>+3 rows</b>',g)}${n('V3–V6')}${n('V7 <b>+3 rows</b>',g)}${n('V8 <b>+1 row</b>',g)}${n('V9')}`
     :`${n('V2')}${n('V3–V6')}${n('V7')}${n('V8')}${n('V9')}${n('PK Sampling ↻ ×7',g)}`;
-  return `<div class="tl dia">${body}</div><div class="muted" style="font-size:12px;margin-top:4px">${d.all?'Created for <b>every</b> participant':'For PK-subgroup participants only'}</div>`; }
+  return `<div class="muted" style="font-size:12px;margin-top:4px">${d.all?'Created for <b>every</b> participant':'For PK-subgroup participants only'}</div>`; }
 function optNums(k){ const d=DESIGNS[k], act=x=>x.d!=='DONE', nPk=total(s=>s.subs.filter(x=>x.pk===true&&act(x)).length), nAll=total(s=>s.subs.filter(act).length), cn=SITES.filter(s=>s.cn).length;
   return [['New visits in the schedule',d.kind==='events'?7:d.kind==='rows'?0:'1 (repeating)'],['Participants who see a change',d.all?`${nAll} (all)`:`${nPk} (PK subgroup)`],['Sites with a change in data entry',d.all?`${SITES.length} of ${SITES.length}`:`${cn} of ${SITES.length}`]]; }
 function vOptions(){ const lock=!!S.signed, cur=S.design, mk={ok:'ok',mid:'warn',bad:'bad'};
@@ -110,7 +110,7 @@ function vOptions(){ const lock=!!S.signed, cur=S.design, mk={ok:'ok',mid:'warn'
   <div class="opts4">${Object.keys(DESIGNS).map(card).join('')}</div>
   <div class="card"><h2>How the options compare</h2><div class="bd" style="padding:0"><table class="v map"><tr><th style="width:21%">What matters</th>${Object.keys(DESIGNS).map(k=>`<th class="${cur===k?'cur':''}">Option ${k}${DESIGNS[k].verdict==='rec'?' ★':''}</th>`).join('')}</tr>
     ${MATRIX.map(r=>`<tr><td>${r[0]}</td>${Object.keys(DESIGNS).map(k=>`<td class="${cur===k?'cur':''}">${icon(mk[r[1][k][0]])} ${r[1][k][1]}</td>`).join('')}</tr>`).join('')}</table></div></div>
-  <div class="card"><h2>Why Option A, and why not the others</h2><div class="bd"><ul class="clean">${Object.keys(DESIGNS).map(k=>`<li>${icon({rec:'ok',ok:'warn',no:'bad'}[DESIGNS[k].verdict])}<div><b>Option ${k} · ${VERD[DESIGNS[k].verdict][1]}.</b> ${DESIGNS[k].verdictWhy}</div></li>`).join('')}</ul></div></div>
+  <div class="card"><h2>Why Option A, and why not the others</h2><div class="bd"><ul class="clean plain">${Object.keys(DESIGNS).map(k=>`<li>${icon({rec:'ok',ok:'warn',no:'bad'}[DESIGNS[k].verdict])}<div><b>Option ${k} · ${VERD[DESIGNS[k].verdict][1]}.</b> ${DESIGNS[k].verdictWhy}</div></li>`).join('')}</ul></div></div>
   ${lock?'':`<div class="decide" style="border-top:0;padding-top:0">
     ${cur?`<button class="btn pri" ${h(()=>{S.sTab='changes'})}>Continue with Option ${cur}: review ${SUG.length} changes ›</button>`:`<button class="btn pri" ${h(()=>{applyDesign('A');S.sTab='changes'})}>Accept the recommendation (Option A) and continue ›</button>`}
     <button class="btn" ${h(()=>crModal({about:'Schema options',title:'None of these fit: request changes',intro:'Say what does not work and what should be tried. The request goes to the study build team and is recorded in the audit trail.',ret:true}))}>None of these fit: request changes…</button>

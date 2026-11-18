@@ -285,8 +285,8 @@ function chrome(body){
   const on=sc||r==='edc'?0:r==='sponsor'?3:10, tabGo={0:()=>nav('edc'),3:()=>nav('sponsor'),10:()=>nav('cro')};
   const navb=`<div class="nav">${items.map((x,i)=>`<span style="cursor:pointer" class="${i===on?'on':''}" ${sc?'':h(tabGo[i]||(()=>toast(x.replace(' ▾','')+' is outside this demo. Data Entry, Studio and Tools are live.')))}>${x}</span>`).join('')}</div>`;
   const crumbs=sc?'':`<div class="crumbs"><a ${h(openStudies)}>⌂ My Studies</a><span class="sep">›</span><a ${h(openStudy)}>CTJ301UC201 ▾</a><span class="sep">›</span><span>${r==='sponsor'?'CTJ301UC201_DEV1':r==='edc'?S.edc.site+' · Data Entry':'CTJ301UC201'}</span>
-    <div class="right">${r==='sponsor'?`<span class="env dev">DEVELOPMENT</span><span>Version: <u>${S.signed?'2.0':'2.0 (draft)'}</u></span>`:`<span class="env">PRODUCTION</span><span>Latest version: <u>${S.signed?2:1}</u></span>`}</div></div>`;
-  return `${demobar}<div class="ws ${sc?'sc':''}">${top}${navb}${crumbs}${r!=='edc'&&S.pg[r]!=='trust'?trustBar():''}<div class="layout">${side()}<main>${body}</main></div></div>`;
+    <div class="right">${r!=='edc'&&S.pg[r]!=='trust'?`<a ${go(r,'trust')}>See how each one was made and checked ›</a>`:''}</div></div>`;
+  return `${demobar}<div class="ws ${sc?'sc':''}">${top}${navb}${crumbs}<div class="layout">${side()}<main>${body}</main></div></div>`;
 }
 function side(){
   const r=S.role, p=S.pg[r], it=(l,pg,extra='')=>`<div class="it ${pg?(p===pg||(pg==='rollout'&&p==='site')?'on':''):'off'}" ${pg?go(r,pg):''}>${l}${extra}</div>`;
@@ -355,7 +355,7 @@ function subjectsTable(st){
   const rows=st.subs.map(x=>{ const i=impact(st,x), o=S.open[x.id];
     return `<tr class="click ${o?'sel':''}" ${h(()=>{S.open[x.id]=!o})}><td class="nw">${o?'▾':'▸'} <a>${x.id}</a></td>
     <td class="nw">${x.d==='SCR'?'Screening':x.d==='DONE'?'Completed':'Study day '+x.d}</td>
-    <td class="nw">${x.pk===true?'<span class="pill blue">PK subgroup</span>':x.pk===null?'<span class="muted">Assigned at randomisation</span>':'<span class="muted">No</span>'}</td>
+    <td class="nw">${x.pk===true?'<span class="muted">PK subgroup</span>':x.pk===null?'<span class="muted">Assigned at randomisation</span>':'<span class="muted">No</span>'}</td>
     <td>${i.sc==='maybe'?'<span class="muted">All 7, only if assigned to the PK subgroup</span>':i.add.length?i.add.map(e=>e.id).join(', '):'<span class="muted">None</span>'}${i.soon.length?` <span class="pill med">${i.soon[0].id} due in ${i.soon[0].d-x.d} day(s)</span>`:''}</td>
     <td>${i.past.length?`<span class="muted">${i.past.map(e=>e.id).join(', ')}</span>`:'<span class="muted">—</span>'}</td>
     <td class="nw">${x.rc===null||i.sc!=='yes'?'<span class="muted">n/a</span>':x.rc?`${icon('ok')} Signed`:i.add.length?`${icon('warn')} Not yet`:'<span class="muted">Not yet</span>'}</td></tr>
@@ -551,7 +551,7 @@ function vSiteChanges(){
       <ul class="clean">${siteFacts(s).map(f=>`<li>${icon(f[0])}<div>${f[1]}</div></li>`).join('')}</ul>
       <p style="margin:10px 0 0"><a ${h(()=>openDoc(s,siteDocs(s)[0]))}>Read the protocol ›</a> &nbsp; ${S.signed?`<a ${h(()=>openDoc(s,siteDocs(s).find(d=>d.id==='chg')))}>See old vs new casebook ›</a> &nbsp; `:''}<a ${go('site','plan')}><b>See the plan for each participant ›</b></a> &nbsp; <a ${openEdc(s.id)}>Open EDC ›</a> &nbsp; <a ${go('site','contacts')}>Who to ask ›</a></p>
     </div></div>
-    ${s.cn?`<div class="card"><h2>Your participants <span class="muted" style="font-weight:normal">— click a row for the visit timeline</span></h2><div class="bd" style="padding:0">${subjectsTable(s)}</div></div>`:''}
+    ${s.cn?`<div class="card"><div class="bd" style="padding:0">${subjectsTable(s)}</div></div>`:''}
     <div class="card"><h2>Before you acknowledge</h2><div class="bd">
       ${items.map(i=>`<div class="gate">${i[3]==='tick'?`<input type="checkbox" style="margin:3px 2px 0 2px" ${i[0]?'checked':''} ${ackd?'disabled':h((e,el)=>{S.brief[s.id]=el.checked})}>`:icon(i[0]?'ok':'wait')}<div><b>${i[1]}</b><span class="muted">${i[2]}</span></div>${!i[0]&&i[3]?(i[3]==='plan'?`<a class="go" ${go('site','plan')}>Open Transition Plan ›</a>`:`<a class="go" ${go('site','docs',{dxTab:i[3]==='tasks'?'actions':'documents'})}>${i[3]==='tasks'?'Open Document Actions':'Open Documents'} ›</a>`):''}</div>`).join('')}
       ${ackd?'':`<div class="decide"><button class="btn org" ${ok?h(()=>signModal({title:'Acknowledge Casebook Update',text:`You confirm that <b>${s.id}</b> has reviewed the changes introduced by Protocol Ver. 1.1 and is ready to collect data on casebook version 2.`,meanings:['Acknowledgement – site has reviewed and is ready'],
