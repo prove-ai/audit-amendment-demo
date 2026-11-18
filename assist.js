@@ -75,19 +75,45 @@ function handling(p){ const d=p.x.d, n=p.up.length, past=p.rows.length-n;
   return past===0?`Dosed on Day 0; all ${n} new samples still lie ahead. Follow the full new schedule.`
     :d<70?`Already past ${past} of the first-dose samples. Do not back-fill them. Collect the ${n} that remain, starting ${fdt(p.next.book)}.`
     :`Past the first-dose samples and ${past-3>0?(past-3)+' of the last-dose samples':'into the last-dose period'}. Collect the ${n} that remain, starting ${fdt(p.next.book)}.`; }
+const tm=d=>`${fdt(d)} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+const whyRow=(n,what,val,src)=>`<tr><td class="n">${n}</td><td class="w">${what}</td><td>${val}</td><td class="s">${src}</td></tr>`;
+const chgLink=(id,l)=>id&&sug(id)?`<a ${h(()=>changeCard(id))}>${l||id}</a>`:'the approved casebook';
+/* Level 2: why one sample has this date. Four short steps, each with where it comes from. */
+function sampleWhy(st,p,r){ const x=p.x, rand=addDays(TODAY,-x.d), ref=pkRef(r.t,rand), last=r.t.d>=70, rec=x.d>=(last?70:0), dow=r.nom.getDay(), wk=dow===0||dow===6, dn=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const cal=r.past?`This time was before today (study day ${x.d}), so the sample is not asked for and no query is raised.`
+    :!wk?`${dn[dow]} is a working day. Booked as calculated.`
+    :r.fixed?`${dn[dow]}. The window is only ±1 hour, so the sample cannot move to a weekday. Booked as calculated and flagged so the site can arrange cover.`
+    :`${dn[dow]}. Moved to ${dn[r.book.getDay()]} at the same time, which is 24 hours ${dow===6?'earlier':'later'} and still inside the ±24 hour window.`;
+  return `<table class="why">
+    ${whyRow(1,'What the protocol asks',`A PK blood sample <b>${r.hrs} hours</b> after the ${last?'6th (last)':'1st'} dose, allowed window <b>${r.win}</b>.`,`<a ${h(()=>openPdf(51))}>Protocol p. 51, Section 6.2.5 ›</a>`)}
+    ${whyRow(2,'This participant’s dose',`${last?'6th':'1st'} dose ${rec?'started':'is planned for'} <b>${tm(ref.dose)}</b>.${rec?'':' The plan updates to the actual time once dosing is recorded.'}`,rec?`Recorded by the site · IMP Administration form, Visit ${last?7:2}`:`Calculated · 1st dose date + 70 days`)}
+    ${whyRow(3,'Adding the hours',`${tm(ref.dose)} + ${r.hrs} h = <b>${tm(r.nom)}</b>`,'Calculated · same result every time')}
+    ${whyRow(4,r.past?'Why it is not requested':'Checking the calendar',cal,r.past?`Rule · no data is asked for in retrospect`:`Rule · move only if the window allows it`)}
+    ${r.past?'':whyRow(5,'Where to enter it',`${r.edc} in Data Entry.`,`From ${chgLink(rid('events')||rid('cont'),'the approved change')}, signed by the sponsor`)}</table>`; }
+/* Level 1: what the plan for one participant rests on. */
+function planWhy(st,p){ const x=p.x, rand=addDays(TODAY,-x.d), d1=pkRef(TPS[0],rand).dose, c=S.plan[x.id];
+  return `<div class="whybox"><table class="why">
+    ${whyRow('','In the PK subgroup','<b>Yes</b>',`Recorded by the site · Randomisation form, PK substudy = Yes`)}
+    ${whyRow('','1st dose',`<b>${tm(d1)}</b>, so today is study day ${x.d}`,`Recorded by the site · IMP Administration form, Visit 2`)}
+    ${whyRow('','Samples asked for',`${p.up.length} of ${p.rows.length}. ${p.rows.length-p.up.length?`The other ${p.rows.length-p.up.length} fell before today and are not asked for.`:'None has passed yet.'}`,'Rule · no data is asked for in retrospect')}
+    ${whyRow('','PK consent form v2.0',x.rc?'<b>Signed</b>':'<b>Not signed yet</b>. No sample may be taken until it is.',`Recorded by the site · Document Exchange`)}
+    ${whyRow('','Rules applied',`Casebook version 2${S.design?', option '+S.design:''}: who gets the samples (${chgLink(rid('scope'))}), the ±1 hour check (${chgLink(rid('win48'))}) and the ±24 hour check (${chgLink(rid('winTime')||rid('winDay'))}).`,S.signed?`Signed by ${S.signed.by}, sponsor · ${S.signed.at}`:'Not yet signed by the sponsor')}
+    ${whyRow('','Confirmed at the site',c?`<b>${c.by}</b> · ${c.at}`:'Not yet. Until then this is a proposal.',c?'Recorded by the site':'Waiting for the site coordinator')}</table>
+    <div class="muted" style="margin-top:6px">Nothing here was written by the AI. Every date is calculated from the dose time, so you can redo it by hand. Click a sample row to see the steps for that date.</div></div>`; }
 function planTable(st,edit){ const pl=sitePlan(st);
   if(!pl.aff.length) return `<div class="note blue"><div>${pl.maybe?`No participant at this site needs a new plan today. ${pl.maybe} participant(s) in screening will get one automatically if they are assigned to the PK subgroup at randomisation.`:'No participant at this site is affected, so there is nothing to re-plan.'}</div></div>`;
   return pl.aff.map(p=>{ const x=p.x, open=S.open['pl'+x.id]!==false, ok=S.plan[x.id];
     return `<div class="card plan"><h2 style="cursor:pointer" ${h(()=>{S.open['pl'+x.id]=!open})}>${open?'▾':'▸'} ${x.id} <span class="muted" style="font-weight:400">Study day ${x.d} · ${p.up.length} new sample(s) to schedule · next ${fdt(p.next.book)}</span>
         ${p.blocked?'<span class="pill dec">Blocked: consent v2.0 not signed</span>':''}${p.up.some(r=>r.fixed)?'<span class="pill med">Weekend sample</span>':''}
         <span style="margin-left:auto">${ok?`<span class="dstat accepted">Plan confirmed</span>`:edit?`<button class="btn sm pri" ${h(e=>{e.stopPropagation&&e.stopPropagation();S.plan[x.id]={by:me().n,at:now()};log(`Transition plan confirmed for ${x.id}: ${p.up.length} new sample(s), first ${fd(p.next.book)}`,st.id);})}>Confirm plan</button>`:'<span class="muted">Not yet confirmed by the site</span>'}</span></h2>
-      ${open?`<div class="bd"><p style="margin:0 0 10px"><b>Recommended handling.</b> ${handling(p)}${p.blocked?` <b style="color:var(--red)">Consent first:</b> the PK substudy consent form (v2.0) must be signed before ${fdt(p.next.book)}.`:''}</p>
+      ${open?`<div class="bd"><p style="margin:0 0 10px"><b>Recommended handling.</b> ${handling(p)}${p.blocked?` <b>Consent first:</b> the PK substudy consent form (v2.0) must be signed before ${fdt(p.next.book)}.`:''}
+          <a style="margin-left:8px;white-space:nowrap" ${h(()=>{S.open['pw'+x.id]=!S.open['pw'+x.id]})}>${S.open['pw'+x.id]?'▾ Hide what this plan is based on':'▸ What is this plan based on?'}</a></p>${S.open['pw'+x.id]?planWhy(st,p):''}
         <table class="v"><tr><th>Sample</th><th>Was in version 1</th><th>Now in version 2</th><th>Nominal date and time</th><th>Window</th><th>Suggested booking</th><th>Enter in EDC as</th><th>Status</th></tr>
-        ${p.rows.map(r=>`<tr class="${r.past?'dim':''}"><td class="nw"><b>Day ${r.t.day}</b> · ${r.hrs} h after ${r.t.d>=70?'6th':'1st'} dose</td><td class="muted">Not collected</td><td>PK blood sample</td>
+        ${p.rows.map(r=>{const k='pr'+x.id+r.t.id, on=S.open[k]; return `<tr class="click ${r.past?'dim':''} ${on?'sel':''}" title="Click to see how this date was worked out" ${h(()=>{S.open[k]=!on})}><td class="nw">${on?'▾':'▸'} <b>Day ${r.t.day}</b> · ${r.hrs} h after ${r.t.d>=70?'6th':'1st'} dose</td><td class="muted">Not collected</td><td>PK blood sample</td>
           <td class="nw">${fdt(r.nom)} ${String(r.nom.getHours()).padStart(2,'0')}:00</td><td class="nw">${r.win}</td>
           <td>${r.past?'<span class="muted">—</span>':`<b>${fdt(r.book)}</b>${r.note?`<div style="font-size:12px;color:${r.fixed?'var(--red)':'var(--amber)'}">${r.note}</div>`:''}`}</td>
           <td class="nw">${r.past?'<span class="muted">—</span>':r.edc}</td>
-          <td>${r.past?'<span class="muted">Passed before version 2. Not expected, no query.</span>':p.blocked?'<span class="pill dec">Needs consent</span>':'<span class="pill blue">To schedule</span>'}</td></tr>`).join('')}</table></div>`:''}</div>`; }).join(''); }
+          <td>${r.past?'<span class="muted">Passed before version 2. Not expected, no query.</span>':p.blocked?'<span class="pill dec">Needs consent</span>':'<span class="pill blue">To schedule</span>'}</td></tr>${on?`<tr class="exp"><td colspan="8">${sampleWhy(st,p,r)}</td></tr>`:''}`;}).join('')}</table></div>`:''}</div>`; }).join(''); }
 function planExport(st,kind){ const pl=sitePlan(st), rows=pl.aff.flatMap(p=>p.up.map(r=>({id:p.x.id,r,blocked:p.blocked})));
   if(kind==='csv') return download(`${st.id}_transition_plan.csv`,['Participant,Sample day,Hours after dose,Nominal date,Suggested booking,Window,Enter in EDC as,Note,Consent'].concat(rows.map(o=>[o.id,o.r.t.day,o.r.hrs,fd(o.r.nom),fd(o.r.book),o.r.win,o.r.edc,o.r.note,o.blocked?'Not signed':'OK'].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','))).join('\n'),'text/csv');
   const z=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}T090000`;
@@ -101,6 +127,14 @@ function vSitePlan(){ const st=site(S.mySite), pl=sitePlan(st), live=!!S.dep[st.
     <div class="card"><h2>How version 2 maps onto your participants already in the trial</h2><div class="bd">
       <p style="margin:0 0 12px">Each participant is at a different point in the study, so the amended schedule lands differently for each of them. This plan works it out per participant, on real dates: what was planned before, what is planned now, what to book, and where to enter it. ${live?'':'<b>Version 2 is not active at your site yet, so this is a preview.</b>'}</p>
       ${planSummary(st)}
+      <p style="margin:12px 0 0"><a ${h(()=>{S.open.plhow=!S.open.plhow})}>${S.open.plhow?'▾ Hide how this plan is worked out':'▸ How is this plan worked out, and why can I rely on it?'}</a></p>
+      ${S.open.plhow?`<div class="whybox"><table class="why">
+        ${whyRow(1,'It starts from the protocol','Samples are due 48, 144 and 240 hours after the 1st and the 6th dose, and 480 hours after the 6th. Windows: ±1 hour at 48 hours, ±24 hours for the rest.',`<a ${h(()=>openPdf(51))}>Protocol p. 51 ›</a>`)}
+        ${whyRow(2,'It uses each participant’s own dose time','Taken from the dosing form your site entered. Nothing is estimated for doses already given.','Recorded by the site')}
+        ${whyRow(3,'It adds the hours','Dose time plus the protocol hours gives the date and time. No AI judgement is involved.','Calculated · same result every time')}
+        ${whyRow(4,'It checks the calendar','A weekend sample moves to the nearest weekday only when the window allows it. Otherwise it is flagged, not hidden.','Rule')}
+        ${whyRow(5,'A person confirms it','The plan is a proposal until your coordinator confirms each participant. Confirmations are in the audit trail.','Recorded by the site')}</table>
+        <div class="muted" style="margin-top:6px">Open a participant below for what their plan is based on, then click any sample for the steps behind its date. <a ${h(()=>actModal(aiActs().find(a=>a.id==='AI-09')))}>See this step in the AI Record ›</a></div></div>`:''}
       <div class="decide" style="margin-top:12px"><button class="btn" ${pl.aff.length?h(()=>planExport(st,'ics')):'disabled'}>Add to calendar (.ics)</button><button class="btn" ${pl.aff.length?h(()=>planExport(st,'csv')):'disabled'}>Export plan (CSV)</button>
         ${pl.aff.length&&pl.done<pl.aff.length?`<button class="btn org" ${h(()=>{pl.aff.forEach(p=>{ if(!S.plan[p.x.id]) S.plan[p.x.id]={by:me().n,at:now()}; });log(`Transition plan confirmed for all ${pl.aff.length} affected participants`,st.id);})}>Confirm all plans</button>`:''}
         <a style="margin-left:auto" ${go('site','changes')}>Back to Amendment Changes ›</a></div></div></div>
