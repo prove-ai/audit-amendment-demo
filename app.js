@@ -250,7 +250,7 @@ function infoModal(title,text,btns){ $('layer').innerHTML=`<div class="ovl"><div
 function pdfFrame(p){return `<iframe src="assets/protocol.pdf#page=${p}&zoom=page-width" title="Protocol PDF"></iframe>`}
 function tocHtml(cur,fn){return TOC.map(t=>`<div class="${t[0]===cur?'on':''}" ${h(()=>fn(t[0]))}><b>${t[1]}</b> <span class="muted">p. ${t[0]}</span><small>${t[2]}</small></div>`).join('')}
 function openPdf(p){ S.pdf=p;
-  $('layer').innerHTML=`<div class="ovl"><div class="modal wide"><h2>Protocol CTJ301UC201 · Ver. 1.1 · 16 May 2017 <span class="pill gray">VV-TMF-00412</span><a href="assets/protocol.pdf#page=${p}" target="_blank">Open in new tab ↗</a><a style="margin-left:14px" ${h(closeM)}>Close ✕</a></h2>
+  $('layer').innerHTML=`<div class="ovl"><div class="modal wide"><h2>Protocol CTJ301UC201 · Ver. 1.1 · 16 May 2017 <span class="pill gray">VV-TMF-00412</span><a href="assets/protocol.pdf#page=${p}" target="_blank">Open in new tab</a><a style="margin-left:14px" ${h(closeM)}>Close ✕</a></h2>
     <div class="pdf"><div class="toc">${tocHtml(p,q=>openPdf(q))}</div>${pdfFrame(p)}</div></div></div>`; return false; }
 function openCompare(){ $('layer').innerHTML=`<div class="ovl"><div class="modal wide" style="height:auto"><h2>Casebook Version 1 → Version 2 · Change Report<a ${h(closeM)}>Close ✕</a></h2><div class="bd">${compareTable(true)}</div></div></div>`; return false; }
 function openDoc(s,d){ const first=!S.read[s.id+d.id]; S.read[s.id+d.id]=1;
@@ -285,7 +285,7 @@ function chrome(body){
   const on=sc||r==='edc'?0:r==='sponsor'?3:10, tabGo={0:()=>nav('edc'),3:()=>nav('sponsor'),10:()=>nav('cro')};
   const navb=`<div class="nav">${items.map((x,i)=>`<span style="cursor:pointer" class="${i===on?'on':''}" ${sc?'':h(tabGo[i]||(()=>toast(x.replace(' ▾','')+' is outside this demo. Data Entry, Studio and Tools are live.')))}>${x}</span>`).join('')}</div>`;
   const crumbs=sc?'':`<div class="crumbs"><a ${h(openStudies)}>⌂ My Studies</a><span class="sep">›</span><a ${h(openStudy)}>CTJ301UC201 ▾</a><span class="sep">›</span><span>${r==='sponsor'?'CTJ301UC201_DEV1':r==='edc'?S.edc.site+' · Data Entry':'CTJ301UC201'}</span>
-    <div class="right">${r!=='edc'&&S.pg[r]!=='trust'?`<a ${go(r,'trust')}>See how each one was made and checked ›</a>`:''}</div></div>`;
+    <div class="right">${r!=='edc'&&S.pg[r]!=='trust'?`<a ${go(r,'trust')}>See how each one was made and checked</a>`:''}</div></div>`;
   return `${demobar}<div class="ws ${sc?'sc':''}">${top}${navb}${crumbs}<div class="layout">${side()}<main>${body}</main></div></div>`;
 }
 function side(){
@@ -309,7 +309,7 @@ function side(){
 /* ================= Shared pieces ================= */
 function evidence(s){
   if(!s.ev) return `<div class="doc"><div class="cap"><span>No direct protocol text</span></div><span style="font-family:Arial;font-size:12px;color:#6b6b6b">This change is inferred from how the study is already built, not from the protocol.</span></div>`;
-  return s.ev.map(b=>{ const link=`<a ${h(()=>openPdf(b.p))}>Open protocol at p. ${b.p} ›</a>`;
+  return s.ev.map(b=>{ const link=`<a ${h(()=>openPdf(b.p))}>Open protocol at p. ${b.p}</a>`;
     if(!b.t) return `<div class="doc"><div class="cap"><span>Protocol Ver. 1.1 · p. ${b.p} · ${b.ref}</span>${link}</div>${b.html}</div>`;
     const row=(lbl,key,fn)=>`<tr><th>${lbl}</th>${b.ctx.map(id=>{const e=evt(id),hl=b.hl.includes(id);
       return `<td class="${hl&&(!b.hlRow||b.hlRow===key)?(b.gap&&key==='win'?'gap':'hl'):''} ${e.sug&&key==='id'?'it':''}">${fn(e)||'&nbsp;'}</td>`}).join('')}</tr>`;
@@ -359,7 +359,7 @@ function subjectsTable(st){
     <td>${i.sc==='maybe'?'<span class="muted">All 7, only if assigned to the PK subgroup</span>':i.add.length?i.add.map(e=>e.id).join(', '):'<span class="muted">None</span>'}${i.soon.length?` <span class="pill med">${i.soon[0].id} due in ${i.soon[0].d-x.d} day(s)</span>`:''}</td>
     <td>${i.past.length?`<span class="muted">${i.past.map(e=>e.id).join(', ')}</span>`:'<span class="muted">—</span>'}</td>
     <td class="nw">${x.rc===null||i.sc!=='yes'?'<span class="muted">n/a</span>':x.rc?`${icon('ok')} Signed`:i.add.length?`${icon('warn')} Not yet`:'<span class="muted">Not yet</span>'}</td></tr>
-    ${o?`<tr class="exp"><td colspan="6">${timeline(st,x)}<div style="margin-top:8px"><a ${openEdc(st.id,x.id)}>Open this casebook in Data Entry ›</a></div></td></tr>`:''}`; }).join('');
+    ${o?`<tr class="exp"><td colspan="6">${timeline(st,x)}<div style="margin-top:8px"><a ${openEdc(st.id,x.id)}>Open this casebook in Data Entry</a></div></td></tr>`:''}`; }).join('');
   return `<table class="v"><tr><th>Subject</th><th>Current status</th><th>PK subgroup</th><th>New PK timepoints they will get</th><th>New timepoints already passed</th><th>PK consent (ICF v2.0)</th></tr>${rows}</table>`;
 }
 function docsTable(st){ const sc=S.role==='site';
@@ -386,7 +386,7 @@ function ecModal(s){ $('layer').innerHTML=`<div class="ovl"><div class="modal"><
   <div class="fld"><label>EC approval date</label><input id="ecd" type="date" class="req" value="2017-06-16"></div><div class="fld"><label>Approval letter (optional)</label><input type="file"></div></div>
   <div class="ft"><a ${h(closeM)}>Cancel</a><button class="btn pri" ${h(()=>{ if(!$('ecd').value) return toast('Enter the approval date'); s.irb=fd(new Date($('ecd').value+'T00:00')); S.pick[s.id]=true; log(`EC approval of Protocol Ver. 1.1 recorded (${s.irb}); site is now eligible for version 2`,s.id); closeM(); })}>Record approval</button></div></div></div>`; return false; }
 function protocolPage(){ return `<div class="ph"><div><h1>Protocol Ver. 1.1</h1><div class="sub">CTJ301UC201 · 16 May 2017 · supersedes Ver. 1.0 (22 Feb 2017) · VV-TMF-00412 · 97 pages</div></div>
-  <div class="acts"><a href="assets/protocol.pdf" target="_blank">Open in new tab ↗</a></div></div>
+  <div class="acts"><a href="assets/protocol.pdf" target="_blank">Open in new tab</a></div></div>
   <div class="pdf pdfpage"><div class="toc">${tocHtml(S.pdf,p=>{S.pdf=p})}</div>${pdfFrame(S.pdf)}</div>`; }
 
 /* ================= Sponsor (Studio) ================= */
@@ -398,12 +398,12 @@ function vAssist(){
   const head=`<div class="ph"><div><h1>Audit</h1><div class="sub">Protocol Ver. 1.1 (16 May 2017) compared with casebook version 1 · ${SUG.length} suggested changes · each one cites the protocol text it came from${S.design?` · <b>Schema option ${S.design}</b>: ${DES().name}`:''}</div></div>
     ${lock?'<span class="pill solid">CASEBOOK V2 APPROVED</span>':'<span class="pill blue">IN REVIEW</span>'}
     <div class="acts"><button class="btn" ${h(()=>openPdf(44))}>View Protocol</button>${lock?'':`<button class="btn pri" ${h(()=>{S.sTab='approve'})}>Approve Casebook v2…</button>`}</div></div>
-    ${S.ret?`<div class="note" style="background:var(--red-soft);border-color:#eab8b0">${icon('bad')}<div><b>Returned for rework (${S.ret}).</b> ${(S.cr.find(c=>c.id===S.ret)||{}).problem||''} Approval is blocked until the request is resolved. <a ${go('sponsor','feedback')}>Open change requests ›</a></div></div>`:''}
+    ${S.ret?`<div class="note" style="background:var(--red-soft);border-color:#eab8b0">${icon('bad')}<div><b>Returned for rework (${S.ret}).</b> ${(S.cr.find(c=>c.id===S.ret)||{}).problem||''} Approval is blocked until the request is resolved. <a ${go('sponsor','feedback')}>Open change requests</a></div></div>`:''}
     <div class="tabs"><button class="${S.sTab==='options'?'on':''}" ${h(()=>{S.sTab='options'})}>1 · Schema Options ${S.design?`<span class="n">(${S.design} chosen)</span>`:''}</button>
       <button class="${S.sTab==='changes'?'on':''}" ${h(()=>{S.sTab='changes'})}>2 · Detailed Changes <span class="n">(${S.design?reviewed()+'/'+SUG.length:'—'})</span></button>
       <button class="${S.sTab==='approve'?'on':''}" ${h(()=>{S.sTab='approve'})}>3 · Validation &amp; Approval</button></div>`;
   if(S.sTab==='options') return head+vOptions()+askBox('sponsor');
-  if(!S.design) return head+`<div class="note">${icon('warn')}<div>Choose a schema option first. The detailed changes depend on which way the amendment is built. <a ${h(()=>{S.sTab='options'})}>Go to Schema Options ›</a></div></div>`;
+  if(!S.design) return head+`<div class="note">${icon('warn')}<div>Choose a schema option first. The detailed changes depend on which way the amendment is built. <a ${h(()=>{S.sTab='options'})}>Go to Schema Options</a></div></div>`;
   if(S.sTab==='approve') return head+vApprove();
   let rows='',cat=''; SUG.forEach(x=>{ if(x.cat!==cat){cat=x.cat;rows+=`<tr class="grp"><td colspan="4">${cat}</td></tr>`;}
     rows+=`<tr class="click ${x.id===S.sel?'sel':''}" ${h(()=>{S.sel=x.id})}><td class="nw"><a>${x.id}</a></td><td>${x.title}<div class="muted" style="font-size:12px">${x.type}</div></td><td>${confPill(x.conf)}</td><td><span class="dstat ${S.dec[x.id]}">${decTxt(S.dec[x.id])}</span></td></tr>`; });
@@ -416,7 +416,7 @@ function vAssist(){
   const need=s.opts&&!S.opt[s.id];
   const decide=v=>h(()=>{ S.dec[s.id]=v; S.val=null; delete S.why[s.id]; log(`${s.id} ${v==='pending'?'decision cleared':v}${v==='accepted'&&s.opts?` (${s.opts.find(o=>o[0]===S.opt[s.id])[1]})`:''}`,'',null,{sug:s.id});
     if(v!=='pending'){const nx=SUG.find(x=>S.dec[x.id]==='pending'); if(nx) S.sel=nx.id;} });
-  return head+`${lock?`<div class="note green">${icon('ok')}<div>Casebook version 2 is approved. Decisions are locked. <a ${go('cro','rollout')}>Continue as CRO ›</a></div></div>`:''}
+  return head+`${lock?`<div class="note green">${icon('ok')}<div>Casebook version 2 is approved. Decisions are locked. <a ${go('cro','rollout')}>Continue as CRO</a></div></div>`:''}
   <div class="split"><div>
     <div class="bar"><span class="muted">${reviewed()} of ${SUG.length} reviewed</span>
       <button class="btn sp" ${hi&&!lock?h(()=>{const l=SUG.filter(x=>x.conf==='high'&&S.dec[x.id]==='pending');l.forEach(x=>S.dec[x.id]='accepted');S.val=null;log(`Accepted ${l.length} high-confidence changes in bulk (${l.map(x=>x.id).join(', ')})`);const nx=SUG.find(x=>S.dec[x.id]==='pending');if(nx)S.sel=nx.id;}):'disabled'}>Accept all high-confidence (${hi})</button></div>
@@ -434,7 +434,7 @@ function vAssist(){
     ${lock?'':`<div class="decide"><button class="btn ${d==='accepted'?'ok':'pri'}" ${need?'disabled':decide('accepted')}>${d==='accepted'?'Accepted':'Accept'}</button>
       <button class="btn" ${h(()=>rejectModal(s))}>${d==='rejected'?'Rejected':'Reject…'}</button>${d!=='pending'?`<a ${decide('pending')}>Undo</a>`:''}
       ${need?'<span class="muted">Choose an option above to accept.</span>':''}
-      <a style="margin-left:auto" ${h(()=>{S.sel=SUG[(SUG.indexOf(s)+1)%SUG.length].id})}>Next ›</a></div>`}
+      <a style="margin-left:auto" ${h(()=>{S.sel=SUG[(SUG.indexOf(s)+1)%SUG.length].id})}>Next</a></div>`}
   </div></div></div>`;
 }
 function vApprove(){
@@ -443,10 +443,10 @@ function vApprove(){
   const valBody=v==='running'?`<div class="muted"><span class="spin"></span> Building casebook v2 from your decisions and checking rules…</div>`
     :v?`<ul class="clean">${v.map(c=>`<li>${icon(c[0])}<div><b>${c[1]}</b><br><span class="muted">${c[2]}</span></div></li>`).join('')}</ul>`
     :`<span class="muted">${all?'Validation checks the casebook that results from your decisions.':'Available once every suggested change has a decision.'}</span>`;
-  return `${S.signed?`<div class="note green">${icon('ok')}<div><b>Approved.</b> ${S.signed.by} · ${S.signed.at} · Meaning: ${S.signed.meaning}. Casebook version 2 is available to the CRO for site rollout. <a ${go('cro','rollout')}>Continue as CRO ›</a></div></div>`:''}
+  return `${S.signed?`<div class="note green">${icon('ok')}<div><b>Approved.</b> ${S.signed.by} · ${S.signed.at} · Meaning: ${S.signed.meaning}. Casebook version 2 is available to the CRO for site rollout. <a ${go('cro','rollout')}>Continue as CRO</a></div></div>`:''}
   <div class="grid2"><div>
     <div class="card"><h2>Before you approve</h2><div class="bd">
-      ${gate(all,false,'Every suggested change reviewed',`${reviewed()} of ${SUG.length} decided`,`<a class="go" ${h(()=>{S.sTab='changes';const nx=SUG.find(x=>S.dec[x.id]==='pending');if(nx)S.sel=nx.id;})}>Review changes ›</a>`)}
+      ${gate(all,false,'Every suggested change reviewed',`${reviewed()} of ${SUG.length} decided`,`<a class="go" ${h(()=>{S.sTab='changes';const nx=SUG.find(x=>S.dec[x.id]==='pending');if(nx)S.sel=nx.id;})}>Review changes</a>`)}
       ${gate(valOk(),Array.isArray(v)&&!valOk(),'Validation passed on your decisions',!v?'Not run yet':v==='running'?'Running…':valOk()?`${v.filter(c=>c[0]==='ok').length} passed, ${v.filter(c=>c[0]==='warn').length} warning(s)`:'Failed – see results below')}
     </div></div>
     <div class="card"><h2>Validation <button class="btn sm" style="margin-left:auto" ${all&&v!=='running'&&!S.signed?h(()=>{S.val='running';setTimeout(()=>{S.val=validate();log(`Validation ${valOk()?'passed':'failed'} (${S.val.filter(c=>c[0]==='warn').length} warning(s))`);render();},1300);}):'disabled'}>${Array.isArray(v)?'Re-run':'Run validation'}</button></h2><div class="bd">${valBody}</div></div>
@@ -475,7 +475,7 @@ const vAudit=(f,sub)=>`<div class="ph"><div><h1>Audit Trail</h1><div class="sub"
 function deploy(ids,m){ const at=now(); ids.forEach(id=>{S.dep[id]={at};S.pick[id]=false;log('Casebook version 2 set as active version (prospective amendment)',id,m); const k=sitePlan(site(id)).aff.length; if(k) log(`Transition plan calculated for ${k} participant(s) from their dose dates (AI-09)`,id,{n:'System',o:'Vault'});});
   S.jobs.unshift({at,ids,by:(m||me()).n}); }
 function fastDeploy(){ if(!S.signed) fastSponsor(); deploy(SITES.filter(s=>eligible(s)&&!S.dep[s.id]).map(s=>s.id),{n:'Jordan Morgan',o:'CRO'}); }
-const needSponsor=()=>S.signed?'':`<div class="note">${icon('warn')}<div>${S.ret?`<b>Returned to the sponsor (${S.ret}).</b> `:''}Casebook version 2 has not been approved by the sponsor yet, so it cannot be activated at sites. You can still review impact below. <a ${go('sponsor','assist')}>Open sponsor view ›</a> · <a ${h(fastSponsor)}>Demo shortcut: complete the sponsor step</a></div></div>`;
+const needSponsor=()=>S.signed?'':`<div class="note">${icon('warn')}<div>${S.ret?`<b>Returned to the sponsor (${S.ret}).</b> `:''}Casebook version 2 has not been approved by the sponsor yet, so it cannot be activated at sites. You can still review impact below. <a ${go('sponsor','assist')}>Open sponsor view</a> · <a ${h(fastSponsor)}>Demo shortcut: complete the sponsor step</a></div></div>`;
 function vRollout(){
   const picked=SITES.filter(s=>S.pick[s.id]&&eligible(s)&&!S.dep[s.id]), can=S.signed&&picked.length, wait=SITES.filter(s=>S.dep[s.id]&&!S.ack[s.id]);
   const shown=SITES.filter(s=>!S.cf||s.ctry===S.cf||(S.cf==='held'&&!s.irb)||(S.cf==='wait'&&S.dep[s.id]&&!S.ack[s.id])), selAll=shown.filter(s=>eligible(s)&&!S.dep[s.id]);
@@ -515,7 +515,7 @@ function vCroSite(){
       <dt>Active casebook</dt><dd>Version ${dep?`2 (since ${dep.at})`:'1'}</dd>
       <dt>Site acknowledgement</dt><dd>${S.ack[s.id]?`${icon('ok')} ${S.ack[s.id].by}, ${S.ack[s.id].at}`:dep?'Requested, not yet signed':'Not requested'}</dd>
       <dt>Subjects</dt><dd>${s.subs.length} · ${s.subs.filter(q=>q.pk===true).length} in PK subgroup</dd></dl>
-      <div class="decide"><button class="btn" ${go('site','changes',{mySite:s.id})}>View as this site ›</button><button class="btn" ${openEdc(s.id)}>Open in Data Entry ›</button>${s.irb?'':`<button class="btn pri" ${h(()=>ecModal(s))}>Record EC Approval…</button>`}
+      <div class="decide"><button class="btn" ${go('site','changes',{mySite:s.id})}>View as this site</button><button class="btn" ${openEdc(s.id)}>Open in Data Entry</button>${s.irb?'':`<button class="btn pri" ${h(()=>ecModal(s))}>Record EC Approval…</button>`}
         ${dep||!eligible(s)?'':`<button class="btn pri" ${S.signed?h(()=>signModal({title:'Set Active Version',text:`You are setting <b>casebook version 2</b> as the active version at <b>${s.id}</b>.`,meanings:['Approval – site rollout authorised'],done:()=>{deploy([s.id]);render();}})):'disabled'}>Set Active Version…</button>`}</div></div></div>
       <div class="card"><h2>What version 2 means for this site</h2><div class="bd"><ul class="clean">${siteFacts(s).map(f=>`<li>${icon(f[0])}<div>${f[1]}</div></li>`).join('')}</ul></div></div></div>`,
     subjects:()=>`<div class="bar"><span class="muted">Click a subject to see their visit timeline.</span></div>${subjectsTable(s)}`,
@@ -549,11 +549,11 @@ function vSiteChanges(){
     ${ackd?`<div class="note green">${icon('ok')}<div><b>Acknowledged.</b> ${ackd.by} · ${ackd.at}. The CRO and sponsor can see your acknowledgement.</div></div>`:short+hold}
     <div class="card"><h2>Protocol Ver. 1.1: what changes at ${s.id} ${status}</h2><div class="bd">
       <ul class="clean">${siteFacts(s).map(f=>`<li>${icon(f[0])}<div>${f[1]}</div></li>`).join('')}</ul>
-      <p style="margin:10px 0 0"><a ${h(()=>openDoc(s,siteDocs(s)[0]))}>Read the protocol ›</a> &nbsp; ${S.signed?`<a ${h(()=>openDoc(s,siteDocs(s).find(d=>d.id==='chg')))}>See old vs new casebook ›</a> &nbsp; `:''}<a ${go('site','plan')}><b>See the plan for each participant ›</b></a> &nbsp; <a ${openEdc(s.id)}>Open EDC ›</a> &nbsp; <a ${go('site','contacts')}>Who to ask ›</a></p>
+      <p style="margin:10px 0 0"><a ${h(()=>openDoc(s,siteDocs(s)[0]))}>Read the protocol</a> &nbsp; ${S.signed?`<a ${h(()=>openDoc(s,siteDocs(s).find(d=>d.id==='chg')))}>See old vs new casebook</a> &nbsp; `:''}<a ${go('site','plan')}><b>See the plan for each participant</b></a> &nbsp; <a ${openEdc(s.id)}>Open EDC</a> &nbsp; <a ${go('site','contacts')}>Who to ask</a></p>
     </div></div>
     ${s.cn?`<div class="card"><div class="bd" style="padding:0">${subjectsTable(s)}</div></div>`:''}
     <div class="card"><h2>Before you acknowledge</h2><div class="bd">
-      ${items.map(i=>`<div class="gate">${i[3]==='tick'?`<input type="checkbox" style="margin:3px 2px 0 2px" ${i[0]?'checked':''} ${ackd?'disabled':h((e,el)=>{S.brief[s.id]=el.checked})}>`:icon(i[0]?'ok':'wait')}<div><b>${i[1]}</b><span class="muted">${i[2]}</span></div>${!i[0]&&i[3]?(i[3]==='plan'?`<a class="go" ${go('site','plan')}>Open Transition Plan ›</a>`:`<a class="go" ${go('site','docs',{dxTab:i[3]==='tasks'?'actions':'documents'})}>${i[3]==='tasks'?'Open Document Actions':'Open Documents'} ›</a>`):''}</div>`).join('')}
+      ${items.map(i=>`<div class="gate">${i[3]==='tick'?`<input type="checkbox" style="margin:3px 2px 0 2px" ${i[0]?'checked':''} ${ackd?'disabled':h((e,el)=>{S.brief[s.id]=el.checked})}>`:icon(i[0]?'ok':'wait')}<div><b>${i[1]}</b><span class="muted">${i[2]}</span></div>${!i[0]&&i[3]?(i[3]==='plan'?`<a class="go" ${go('site','plan')}>Open Transition Plan</a>`:`<a class="go" ${go('site','docs',{dxTab:i[3]==='tasks'?'actions':'documents'})}>${i[3]==='tasks'?'Open Document Actions':'Open Documents'}</a>`):''}</div>`).join('')}
       ${ackd?'':`<div class="decide"><button class="btn org" ${ok?h(()=>signModal({title:'Acknowledge Casebook Update',text:`You confirm that <b>${s.id}</b> has reviewed the changes introduced by Protocol Ver. 1.1 and is ready to collect data on casebook version 2.`,meanings:['Acknowledgement – site has reviewed and is ready'],
           done:()=>{S.ack[s.id]={by:me().n,at:now()};log('Site acknowledged casebook version 2 by electronic signature',s.id);render();}})):'disabled'}>Acknowledge and Sign…</button>
         <button class="btn" ${h(()=>crModal({about:`Casebook v2 at ${s.id}`,site:s.id,title:'Report a problem with this change',intro:'Use this if the change does not work at your site as described. Say what does not work and what you would need instead. The CRO and sponsor see it straight away.',to:['CRO clinical site manager','Sponsor study build team']}))}>Cannot acknowledge: report a problem…</button>
@@ -575,10 +575,10 @@ function vSiteDocs(){ const s=site(S.mySite), t=S.dxTab, ts=siteTasks(s);
   const docs=`<div class="card"><div class="bd" style="padding:4px 12px 8px"><div class="bar" style="margin:8px 0"><button class="btn org" ${unread(s)?h(()=>{siteDocs(s).forEach(d=>S.read[s.id+d.id]=1);log('All documents marked as read',s.id);}):'disabled'}>Mark as Read</button><span class="muted">${unread(s)} unread</span></div>${docsTable(s)}</div></div><p class="muted">Opening a document marks it as read and records it in the audit trail.</p>`;
   return scPage([['Document Actions',()=>{S.dxTab='actions'},t==='actions'],['Documents',()=>{S.dxTab='documents'},t!=='actions']],t==='actions'?actions:docs); }
 const vSiteLinks=()=>{const s=site(S.mySite);return scPage([['System Links',null,1]],`<div class="card"><div class="bd" style="padding:4px 12px 8px"><table class="v"><tr><th>System Name</th><th>System Type</th><th>Description</th></tr>
-  ${[['Veeva EDC ↗','EDC','Enter casebook information here. New PK visits appear once version 2 is active.',openEdc(s.id)],['Study Training ↗','Training','Protocol Ver. 1.1: PK visits and sampling windows (section 6.2.5).',h(()=>openPdf(51))],['Protocol Ver. 1.1 ↗','eTMF','The amended protocol, full text.',h(()=>openDoc(s,siteDocs(s)[0]))],['RTSM ↗','RTSM / IRT','Randomisation and PK subgroup assignment.',h(()=>toast('RTSM is an external system and is not simulated in this demo'))]].map(r=>`<tr class="click" ${r[3]}><td><a>${r[0]}</a></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div></div>`);};
+  ${[['Veeva EDC','EDC','Enter casebook information here. New PK visits appear once version 2 is active.',openEdc(s.id)],['Study Training','Training','Protocol Ver. 1.1: PK visits and sampling windows (section 6.2.5).',h(()=>openPdf(51))],['Protocol Ver. 1.1','eTMF','The amended protocol, full text.',h(()=>openDoc(s,siteDocs(s)[0]))],['RTSM','RTSM / IRT','Randomisation and PK subgroup assignment.',h(()=>toast('RTSM is an external system and is not simulated in this demo'))]].map(r=>`<tr class="click" ${r[3]}><td><a>${r[0]}</a></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div></div>`);};
 const vSiteContacts=()=>scPage([['Sponsor/CRO Contacts',null,1]],`<div class="card"><div class="bd" style="padding:8px 12px">${contactsTable(site(S.mySite))}</div></div>`);
 const vSiteInfo=()=>{const s=site(S.mySite), g=CTG.study;return scPage([['Study Information',null,1]],`<div class="card"><div class="bd"><dl class="kv">
-  <dt>Study Number</dt><dd>${g.num} · <a href="https://clinicaltrials.gov/study/${g.nct}" target="_blank">${g.nct} ↗</a></dd><dt>Protocol Title</dt><dd>${g.title}</dd>
+  <dt>Study Number</dt><dd>${g.num} · <a href="https://clinicaltrials.gov/study/${g.nct}" target="_blank">${g.nct}</a></dd><dt>Protocol Title</dt><dd>${g.title}</dd>
   <dt>Sponsor</dt><dd>${g.sponsor}</dd><dt>Study Phase</dt><dd>${g.phase}</dd><dt>Masking</dt><dd>${g.mask}</dd><dt>Indication</dt><dd>${g.cond}</dd>
   <dt>Current protocol</dt><dd>Ver. 1.1, 16 May 2017 <a ${h(()=>openDoc(s,siteDocs(s)[0]))}>open</a></dd>
   <dt>Site</dt><dd>${s.id} · ${s.name}, ${s.city}, ${s.ctry}</dd><dt>Principal Investigator</dt><dd>${s.pi} <span class="muted">(simulated)</span></dd><dt>Active casebook</dt><dd>Version ${S.dep[s.id]?2:1} <a ${go('site','changes')}>what changes</a></dd></dl></div></div>
@@ -607,12 +607,12 @@ function openStudy(){ const g=CTG.study, cs=[...new Set(SITES.map(s=>s.ctry))];
     <dt>Arms</dt><dd>${g.arms.map(a=>`${a.label} (${a.type})`).join(' · ')}</dd><dt>Primary outcome</dt><dd>${g.primary}</dd><dt>Secondary outcomes</dt><dd>${g.secondary.join('<br>')}</dd>
     <dt>Eligibility age</dt><dd>${g.age}</dd><dt>Enrollment</dt><dd>${g.enroll} (actual)</dd><dt>Locations</dt><dd>${SITES.length} sites: ${cs.map(c=>`${c} ${SITES.filter(s=>s.ctry===c).length}`).join(', ')}</dd>
     <dt>Registry status</dt><dd>${g.status} · started ${g.start} · completed ${g.end}</dd><dt>Study official</dt><dd>${g.official}</dd>
-    <dt>Links</dt><dd><a href="https://clinicaltrials.gov/study/${g.nct}" target="_blank">ClinicalTrials.gov record ↗</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/${g.pmid}/" target="_blank">Results publication (PMID ${g.pmid}) ↗</a> · <a ${h(()=>openPdf(1))}>Protocol Ver. 1.1</a></dd></dl></div></div></div>`; return false; }
+    <dt>Links</dt><dd><a href="https://clinicaltrials.gov/study/${g.nct}" target="_blank">ClinicalTrials.gov record</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/${g.pmid}/" target="_blank">Results publication (PMID ${g.pmid})</a> · <a ${h(()=>openPdf(1))}>Protocol Ver. 1.1</a></dd></dl></div></div></div>`; return false; }
 function openStudies(){ const g=CTG.study;
   $('layer').innerHTML=`<div class="ovl"><div class="modal wide" style="height:auto"><h2>My Studies <span class="muted" style="font-size:12px">public registry records, ClinicalTrials.gov, fetched ${CTG.fetched}</span><a ${h(closeM)}>Close ✕</a></h2><div class="bd">
     <table class="v"><tr><th>Study Number</th><th>Study</th><th>Sponsor</th><th>Registry status</th><th>Enrolled</th><th>Sites</th><th>Countries</th><th>Protocol amendment</th></tr>
     <tr class="click sel" ${h(()=>{closeM();openStudy();return false;})}><td class="nw"><a><b>${g.num}</b></a><div class="muted" style="font-size:12px">${g.nct}</div></td><td>${g.brief}</td><td>${g.sponsor}</td><td>${g.status}</td><td class="r">${g.enroll}</td><td class="r">${SITES.length}</td><td class="r">3</td><td class="nw"><span class="pill med">Amendment 1 · ${S.signed?'rolling out':'in review'}</span></td></tr>
-    ${CTG.others.map(o=>`<tr><td class="nw"><b>${o.num}</b><div class="muted" style="font-size:12px">${o.nct}</div></td><td>${o.brief}</td><td>${o.sponsor}</td><td>${o.status}</td><td class="r">${o.enroll}</td><td class="r">${o.sites}</td><td class="r">${o.countries}</td><td class="nw"><span class="muted">None open</span> · <a href="https://clinicaltrials.gov/study/${o.nct}" target="_blank">registry ↗</a></td></tr>`).join('')}</table>
+    ${CTG.others.map(o=>`<tr><td class="nw"><b>${o.num}</b><div class="muted" style="font-size:12px">${o.nct}</div></td><td>${o.brief}</td><td>${o.sponsor}</td><td>${o.status}</td><td class="r">${o.enroll}</td><td class="r">${o.sites}</td><td class="r">${o.countries}</td><td class="nw"><span class="muted">None open</span> · <a href="https://clinicaltrials.gov/study/${o.nct}" target="_blank">registry</a></td></tr>`).join('')}</table>
     <p class="muted" style="margin-bottom:0">Only ${g.num} is loaded with a casebook in this demo. The other rows are real phase 2 ulcerative colitis studies listed for context.</p></div></div></div>`; return false; }
 
 const BRAND=n=>`<span class="brand" style="font-size:${n}px"><svg width="${(n*0.84).toFixed(1)}" height="${(n*0.8).toFixed(1)}" viewBox="0 1.5 20 18" aria-label="A"><path d="M1 2h5l4 10 4-10h5L12 19H8z" fill="#f5921b" transform="rotate(180 10 10.5)"/></svg>udit</span>`;
@@ -653,30 +653,30 @@ function vHome(){
     ['What data is in the demo?',`The study record and all ${SITES.length} sites are real, from ClinicalTrials.gov (${g.nct}). The protocol is the real public PDF. Staff, participants, dates and the rollout are simulated, and the assistant’s suggestions are scripted.`],
     ['How do I present it quickly?',`Use the walkthrough for a guided tour, or skip ahead: <a ${h(()=>{fastSponsor();toast('Sponsor step completed')})}>complete the sponsor step</a> · <a ${h(()=>{fastDeploy();toast('Sponsor and CRO steps completed')})}>complete sponsor and CRO steps</a> · <a ${h(openPacket)}>open the inspection packet</a>. The three workspaces share one state, so what you do in one shows up in the others.`]];
   return `<div class="lp">
-  <section class="lp-hero"><header class="lp-nav"><a class="lp-brand">${BRAND(25)}</a><nav><a ${scrollTo('trust')}>Why trust it</a><a ${scrollTo('how')}>How it works</a><a ${scrollTo('study')}>The study</a><a ${scrollTo('faq')}>FAQs</a><button class="btn org" ${toSignIn(null,'login')}>Open workspace →</button></nav></header>
+  <section class="lp-hero"><header class="lp-nav"><a class="lp-brand">${BRAND(25)}</a><nav><a ${scrollTo('trust')}>Why trust it</a><a ${scrollTo('how')}>How it works</a><a ${scrollTo('study')}>The study</a><a ${scrollTo('faq')}>FAQs</a><button class="btn org" ${toSignIn(null,'login')}>Open workspace</button></nav></header>
     <div class="lp-hero-in">
       <h1>From protocol amendment<br>to a clean handoff.</h1>
       <p>AI drafts the casebook update. Every change arrives with its source page, its test results, its doubts and the name of the person who signed for it.</p>
-      <div class="lp-cta"><button class="btn org" ${toSignIn(null,'login')}>Open your workspace →</button><button class="btn ghost" ${h(startTour)}>▶ Take the walkthrough <span>2 min</span></button></div>
+      <div class="lp-cta"><button class="btn org" ${toSignIn(null,'login')}>Open your workspace</button><button class="btn ghost" ${h(startTour)}>▶ Take the walkthrough <span>2 min</span></button></div>
       <span class="lp-aud">For sponsors, CROs and site teams.</span></div></section>
   <section class="lp-benefits"><div class="hw">
     <article><b>Nothing rests on the AI’s word</b><p>Each AI draft shows where it came from, how it was tested and what it is unsure of. It changes nothing until a named person accepts it.</p></article>
     <article><b>Options, not a single answer</b><p>Four ways to build the change, compared on what matters, with a recommendation and the reasons against the others.</p></article>
     <article><b>A handoff everyone can follow</b><p>Sponsor, CRO and site each sign for their part, and one audit trail shows who decided what, and why.</p></article></div></section>
-  <section class="lp-sec alt" id="trust"><div class="hw"><span class="lp-eye">The AI Record</span><h2>How do I trust what the AI built?</h2><p class="lp-sub">You should not have to. Every automated step, for sponsor, CRO and site, carries the same five answers, in plain words.</p>
+  <section class="lp-sec alt" id="trust"><div class="hw"><span class="lp-eye">The AI Record</span><h2>How do I trust what the AI built?</h2><p class="lp-sub">Detailed auditing and consistency across sponsor, CRO and site.</p>
     <div class="lp-steps five">${[['1','Where it came from','The protocol page, opened beside the change. If it is not in the protocol, it says so.'],['2','What was done','A plain-language account of the change, with the casebook before and after.'],['3','How it was tested','Test cases on made-up participants. Try the same case yourself in Data Entry.'],['4','What it is unsure of','Where the protocol is unclear the assistant does not choose. A person does.'],['5','Who signed for it','Name, organisation and time for every accept, reject and signature.']].map(x=>`<article><i>${x[0]}</i><h3>${x[1]}</h3><p>${x[2]}</p></article>`).join('')}</div>
-    <p class="lp-sub" style="margin:28px 0 0">AI drafts and fixed-rule calculations are labelled differently, because only one of them can be wrong in a way you cannot recompute. <a ${h(()=>nav('sponsor','trust'))}><b>Open the AI Record →</b></a></p></div></section>
+    <p class="lp-sub" style="margin:28px 0 0">AI drafts and fixed-rule calculations are labelled differently, because only one of them can be wrong in a way you cannot recompute. <a ${h(()=>nav('sponsor','trust'))}><b>Open the AI Record</b></a></p></div></section>
   <section class="lp-sec" id="how"><div class="hw"><span class="lp-eye">One amendment. Three sign-offs.</span><h2>How it works</h2><p class="lp-sub">Each role works in its own workspace. The amendment moves on only when the previous party has signed.</p>
-    <div class="lp-steps">${P.map(p=>`<article><h3>${p[1]}</h3><p>${p[2]}</p><span class="lp-st">${p[3]}</span><a ${toSignIn(p[0],'login')}>Log in as ${ROLES[p[0]][0]} →</a></article>`).join('')}</div></div></section>
+    <div class="lp-steps">${P.map(p=>`<article><h3>${p[1]}</h3><p>${p[2]}</p><span class="lp-st">${p[3]}</span><a ${toSignIn(p[0],'login')}>Log in as ${ROLES[p[0]][0]}</a></article>`).join('')}</div></div></section>
   <section class="lp-sec alt" id="study"><div class="hw"><span class="lp-eye">Real public study data</span><h2>The study in this demo</h2>
     <div class="lp-study"><div><h3>${g.num} <span class="pill gray">${g.phase}</span></h3><p>${g.brief}</p>
         <dl class="kv"><dt>Sponsor</dt><dd>${g.sponsor}</dd><dt>Sites</dt><dd>${SITES.length} in China, South Korea and Taiwan · ${g.enroll} participants</dd>
         <dt>Amendment</dt><dd>Protocol Ver. 1.0 → Ver. 1.1: seven extra PK blood samples for the Mainland China PK subgroup</dd></dl></div>
-      <div><h3>References</h3><ul><li><a href="https://clinicaltrials.gov/study/${g.nct}" target="_blank">ClinicalTrials.gov ${g.nct} ↗</a></li><li><a href="https://cdn.clinicaltrials.gov/large-docs/52/${g.nct}/Prot_000.pdf" target="_blank">Protocol PDF, source file ↗</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/${g.pmid}/" target="_blank">Results publication ↗</a></li>
+      <div><h3>References</h3><ul><li><a href="https://clinicaltrials.gov/study/${g.nct}" target="_blank">ClinicalTrials.gov ${g.nct}</a></li><li><a href="https://cdn.clinicaltrials.gov/large-docs/52/${g.nct}/Prot_000.pdf" target="_blank">Protocol PDF, source file</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/${g.pmid}/" target="_blank">Results publication</a></li>
         <li><a ${h(openStudy)}>Full study record</a> · <a ${h(()=>openPdf(44))}>read the protocol here</a> · <a ${h(openStudies)}>other studies</a></li></ul></div></div></div></section>
   <section class="lp-sec" id="faq"><div class="hw narrow"><span class="lp-eye">Before you start</span><h2>Questions</h2>
     ${FAQ.map(q=>`<details><summary>${q[0]}</summary><p>${q[1]}</p></details>`).join('')}
-    <div class="lp-end"><button class="btn org" ${toSignIn(null,'login')}>Open your workspace →</button> <button class="btn" ${toSignIn(null,'signup')}>Create an account</button></div></div></section>
+    <div class="lp-end"><button class="btn org" ${toSignIn(null,'login')}>Open your workspace</button> <button class="btn" ${toSignIn(null,'signup')}>Create an account</button></div></div></section>
   <div class="foot">Concept demo. Not a Veeva product and not affiliated with Veeva Systems.</div></div>`;
 }
 

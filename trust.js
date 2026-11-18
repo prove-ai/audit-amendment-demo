@@ -44,7 +44,7 @@ function custody(s){ const d=S.dec[s.id], t=tests(s).st, el=SITES.filter(eligibl
     ['CRO activation',nd?'ok':'wait',`${nd} of ${el} sites`],['Site sign-off',na?'ok':'wait',`${na} of ${nd||el} sites`]];
   return `<div class="cust">${steps.map(x=>`<div class="${x[1]}"><i></i><b>${x[0]}</b><span>${x[2]}</span></div>`).join('')}</div>`; }
 function trustBrief(s){ const b=basis(s), by=decidedBy(s);
-  return `<div class="sec trust"><label>Can I trust this? <a ${h(()=>changeCard(s.id))}>See the full record ›</a></label><table class="tb">
+  return `<div class="sec trust"><label>Can I trust this? <a ${h(()=>changeCard(s.id))}>See the full record</a></label><table class="tb">
     <tr><td>Based on</td><td><span class="pill ${b[0]}">${b[1]}</span> ${s.ev?pgs(srcPages(s)):''}</td></tr>
     <tr><td>Tested</td><td>${testLine(s)}</td></tr>
     <tr><td>The assistant’s doubt</td><td>${b[2]}</td></tr>
@@ -55,7 +55,7 @@ function trustRecord(s){ const b=basis(s), t=tests(s), r=revs(s), res={pass:`${i
     ${step(1,'Where it came from',`<p><span class="pill ${b[0]}">${b[1]}</span></p>${evidence(s)}`)}
     ${step(2,'What the assistant did, in plain words',`<p>${s.why}</p><div class="ba"><div><small>Casebook v1 (current)</small>${s.before||'—'}</div><i>→</i><div class="after"><small>Casebook v2 (proposed)</small>${s.after||'—'}</div></div>${s.rule?`<pre class="rule">${s.rule}</pre>`:''}`)}
     ${step(3,'How it was tested',`<table class="v"><tr><th>Test data entered</th><th>What should happen</th><th>Result</th></tr>${t.l.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td><td class="nw">${res}</td></tr>`).join('')}</table>
-      <p class="muted" style="margin:6px 0 0">Run on made-up participants in a test copy, never on real data. <a ${h(()=>{closeM();nav('edc',null,{edc:{site:'CN-101',sub:'CN101-002',ev:null,prev:true}});})}>Try it yourself in Data Entry ›</a></p>`)}
+      <p class="muted" style="margin:6px 0 0">Run on made-up participants in a test copy, never on real data. <a ${h(()=>{closeM();nav('edc',null,{edc:{site:'CN-101',sub:'CN101-002',ev:null,prev:true}});})}>Try it yourself in Data Entry</a></p>`)}
     ${step(4,'What the assistant is not sure about',`<p>${b[2]}</p>${S.why[s.id]?`<div class="note">${icon('bad')}<div><b>Reviewer’s reason for rejecting:</b> ${S.why[s.id]}</div></div>`:''}`)}
     ${step(5,'Who reviewed it',r.length?`<table class="v"><tr><th>When</th><th>Who</th><th>What they did</th></tr>${r.map(e=>`<tr><td class="nw muted">${e.t}</td><td class="nw">${e.u} · ${e.o}${e.s?' · '+e.s:''}</td><td>${e.x}</td></tr>`).join('')}</table>`
       :`<p>${icon('wait')} No person has reviewed this yet. It is a draft and changes nothing until the sponsor decides and signs.</p>`)}`; }
@@ -109,7 +109,7 @@ function trustNums(){ const a=aiActs(), need=a.filter(x=>x.rev.ok!==null), ch=SU
   return {a,ai:a.filter(x=>x.k==='ai').length-1+SUG.length,calc:a.filter(x=>x.k==='calc').length,done:need.filter(x=>x.rev.ok).length,need:need.length,wait:need.filter(x=>!x.rev.ok).length,
     doubt:SUG.filter(s=>s.conf!=='high').length+1,ch}; }
 function trustBar(){ const n=trustNums();
-  return `<div class="trustbar"><span class="assist">✦ AI Record</span><span>${n.ai} items drafted by AI · ${n.calc} calculated by rule · <b>${n.done} of ${n.need}</b> automated steps reviewed by a named person${n.wait?` · ${n.wait} waiting`:''}</span><a ${go(S.role,'trust')}>See how each one was made and checked ›</a></div>`; }
+  return `<div class="trustbar"><span class="assist">✦ AI Record</span><span>${n.ai} items drafted by AI · ${n.calc} calculated by rule · <b>${n.done} of ${n.need}</b> automated steps reviewed by a named person${n.wait?` · ${n.wait} waiting`:''}</span><a ${go(S.role,'trust')}>See how each one was made and checked</a></div>`; }
 function actModal(a){ const sec=(l,b)=>`<div class="sec"><label>${l}</label>${b}</div>`;
   $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:720px"><h2>${a.id} ${kindPill(a.k)}<a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
     <h3>${a.t}</h3><div class="muted">${KIND[a.k][1]}</div>
@@ -118,7 +118,7 @@ function actModal(a){ const sec=(l,b)=>`<div class="sec"><label>${l}</label>${b}
     ${sec('How it was checked',`<ul class="clean">${a.checks.map(c=>`<li>${icon(c[0])}<div><b>${c[1]}</b><br><span class="muted">${c[2]}</span></div></li>`).join('')}</ul>`)}
     ${sec(a.k==='ai'?'What the assistant is not sure about':'What it cannot know',a.unsure.length?`<ul style="margin:0;padding-left:18px">${a.unsure.map(u=>`<li>${u}</li>`).join('')}</ul>`:'Nothing flagged.')}
     ${sec('Reviewed by a person',`${a.rev.ok===null?'':icon(a.rev.ok?'ok':'wait')} ${a.rev.txt}`)}</div>
-    <div class="ft"><a ${h(closeM)}>Close</a><button class="btn pri" ${h(()=>{closeM();a.go();})}>Open it ›</button></div></div></div>`; return false; }
+    <div class="ft"><a ${h(closeM)}>Close</a><button class="btn pri" ${h(()=>{closeM();a.go();})}>Open it</button></div></div></div>`; return false; }
 function vTrust(){ const n=trustNums(), f=S.tf||'all', sc=S.role==='site', kids=S.tk!==false;
   const G={sponsor:'Sponsor · building the casebook update',cro:'CRO · rolling it out to sites',site:'Site · applying it to participants'};
   const show=a=>f==='all'||(f==='wait'&&a.rev.ok===false)||(f==='ai'&&a.k==='ai'), rv=r=>r.ok===null?`<span class="muted">${r.txt}</span>`:`${icon(r.ok?'ok':'wait')} ${r.txt}`;

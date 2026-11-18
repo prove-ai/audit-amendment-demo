@@ -104,7 +104,7 @@ function vOptions(){ const lock=!!S.signed, cur=S.design, mk={ok:'ok',mid:'warn'
   const card=k=>{const d=DESIGNS[k],v=VERD[d.verdict],on=cur===k;return `<div class="opt ${on?'on':''} v-${d.verdict}">
     <div class="oh"><b>Option ${k}</b><span class="pill ${v[0]}">${v[1]}</span></div><h3>${d.name}</h3><p>${d.short}</p>${dia(k)}
     <table class="mini">${optNums(k).map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join('')}</table>
-    <div class="of">${on?`<span class="dstat accepted">Chosen</span> <a ${h(()=>{S.sTab='changes'})}>Review its ${SUG.length} changes ›</a>`
+    <div class="of">${on?`<span class="dstat accepted">Chosen</span> <a ${h(()=>{S.sTab='changes'})}>Review its ${SUG.length} changes</a>`
       :`<button class="btn ${d.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose option ${k}</button>`}</div></div>`;};
   return `${lock?`<div class="note green">${icon('ok')}<div>Casebook version 2 was approved with <b>Option ${cur}</b>. The choice is locked.</div></div>`:''}
   <div class="opts4">${Object.keys(DESIGNS).map(card).join('')}</div>
@@ -112,7 +112,7 @@ function vOptions(){ const lock=!!S.signed, cur=S.design, mk={ok:'ok',mid:'warn'
     ${MATRIX.map(r=>`<tr><td>${r[0]}</td>${Object.keys(DESIGNS).map(k=>`<td class="${cur===k?'cur':''}">${icon(mk[r[1][k][0]])} ${r[1][k][1]}</td>`).join('')}</tr>`).join('')}</table></div></div>
   <div class="card"><h2>Why Option A, and why not the others</h2><div class="bd"><ul class="clean plain">${Object.keys(DESIGNS).map(k=>`<li>${icon({rec:'ok',ok:'warn',no:'bad'}[DESIGNS[k].verdict])}<div><b>Option ${k} · ${VERD[DESIGNS[k].verdict][1]}.</b> ${DESIGNS[k].verdictWhy}</div></li>`).join('')}</ul></div></div>
   ${lock?'':`<div class="decide" style="border-top:0;padding-top:0">
-    ${cur?`<button class="btn pri" ${h(()=>{S.sTab='changes'})}>Continue with Option ${cur}: review ${SUG.length} changes ›</button>`:`<button class="btn pri" ${h(()=>{applyDesign('A');S.sTab='changes'})}>Accept the recommendation (Option A) and continue ›</button>`}
+    ${cur?`<button class="btn pri" ${h(()=>{S.sTab='changes'})}>Continue with Option ${cur}: review ${SUG.length} changes</button>`:`<button class="btn pri" ${h(()=>{applyDesign('A');S.sTab='changes'})}>Accept the recommendation (Option A) and continue</button>`}
     <button class="btn" ${h(()=>crModal({about:'Schema options',title:'None of these fit: request changes',intro:'Say what does not work and what should be tried. The request goes to the study build team and is recorded in the audit trail.',ret:true}))}>None of these fit: request changes…</button>
     <span class="muted">${cur?'You can switch option until you approve; switching clears the decisions made so far.':'Nothing is changed in the casebook until you approve and sign.'}</span></div>`}`; }
 

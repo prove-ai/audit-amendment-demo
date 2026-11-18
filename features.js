@@ -98,7 +98,7 @@ function vEdc(){
       <dt>Nominal timepoint (PKTPT)</dt><dd><select id="f_tp" style="padding:4px"><option value="">— select —</option>${tps.map(p=>`<option ${(sv?sv.tp:def)===p[0]?'selected':''}>${p[0]}</option>`).join('')}</select>${t.tp&&!def?' <span class="pill dec">codelist has no entry for this timepoint</span>':''}</dd>
       <dt>Actual sample date and time</dt><dd><input id="f_sdt" type="datetime-local" value="${sv?sv.sdt:isoT(r.nom)}" style="padding:4px"> <span class="muted">nominal = dose start + ${r.hrs} h${timeChk?' · allowed ± '+(t.h48?'1 h':'24 h'):''}</span></dd></div>
       <div class="decide"><button class="btn pri" ${h(()=>savePk(c,e,t))}>Save and Submit</button><span class="muted">${t.tp&&t.h48?'Try it: move the sample time two hours later and submit.':t.tp&&w!==null?'Try it: move the event date outside the window and submit.':t.tp&&timeChk?'Try it: move the sample time two days later and submit.':''}</span></div>
-      ${sv?(sv.q.length?sv.q.map(z=>`<div class="note" style="background:var(--red-soft);border-color:#eab8b0;margin:10px 0 0">${icon('bad')}<div><b>Query opened · ${z[0]}</b><br>${z[1]} ${z[2]?`<a ${h(()=>changeCard(z[2]))}>Why this rule exists (${z[2]}) ›</a>`:''}</div></div>`).join('')
+      ${sv?(sv.q.length?sv.q.map(z=>`<div class="note" style="background:var(--red-soft);border-color:#eab8b0;margin:10px 0 0">${icon('bad')}<div><b>Query opened · ${z[0]}</b><br>${z[1]} ${z[2]?`<a ${h(()=>changeCard(z[2]))}>Why this rule exists (${z[2]})</a>`:''}</div></div>`).join('')
         :`<div class="note green" style="margin:10px 0 0">${icon('ok')}<div><b>Submitted ${sv.at}.</b> No queries.</div></div>`):''}`; }
   return `<div class="ph"><div><div style="font-size:12px;margin-bottom:2px"><a ${go('cro','site',{croSite:s.id,siteTab:'subjects'})}>‹ ${s.id} · ${s.name}</a></div><h1>${x.id} <span class="muted" style="font-weight:normal;font-size:14px">${x.d==='SCR'?'Screening':x.d==='DONE'?'Completed':'Study day '+x.d}${x.pk===true?' · PK subgroup':''}</span></h1></div>
       <span class="pill ${c.v2?'solid':'gray'}">CASEBOOK VERSION ${c.v2?'2 · OPTION '+D.k:1}</span>
@@ -174,11 +174,11 @@ function auditMap(f){ const l=auditList(f,true), cur=S.af.st;
 function auditEntry(seq){ const l=chain(), e=l.find(x=>x.seq===seq); if(!e) return false; const prev=l.find(x=>x.seq===seq-1), next=l.find(x=>x.seq===seq+1), st=STAGES.find(s=>s[0]===stageOf(e)), act=(/\((AI-\d+)\)/.exec(e.x)||[])[1];
   const rel=l.filter(x=>x!==e&&((e.ref&&e.ref.sug&&x.ref&&x.ref.sug===e.ref.sug)||(e.s&&x.s===e.s))).slice(0,8), mini=(x,lbl)=>x?`<tr class="click" ${h(()=>auditEntry(x.seq))}><td class="nw muted">${lbl||'#'+x.seq}</td><td class="nw muted">${x.t}</td><td class="nw">${x.u} · ${x.o}</td><td>${x.x}</td><td class="chev">›</td></tr>`:'';
   const sec=(t,b)=>`<div class="sec"><label>${t}</label>${b}</div>`, btns=[];
-  if(e.ref&&e.ref.sug&&sug(e.ref.sug)) btns.push(`<button class="btn pri" ${h(()=>changeCard(e.ref.sug))}>Open change ${e.ref.sug}: source, tests, reviewers ›</button>`);
-  if(act) btns.push(`<button class="btn pri" ${h(()=>actModal(aiActs().find(a=>a.id===act)))}>Open ${act}: how this was produced and checked ›</button>`);
-  if(e.ref&&e.ref.p) btns.push(`<button class="btn" ${h(()=>openPdf(e.ref.p))}>Open protocol at p. ${e.ref.p} ›</button>`);
-  if(e.s&&S.role!=='site') btns.push(`<button class="btn" ${h(()=>{closeM();nav('cro','site',{croSite:e.s,siteTab:'overview'});})}>Open site ${e.s} ›</button>`);
-  if(/Change request (CR-\d+)/.test(e.x)&&S.role!=='site') btns.push(`<button class="btn" ${h(()=>{closeM();nav(S.role,'feedback');})}>Open change requests ›</button>`);
+  if(e.ref&&e.ref.sug&&sug(e.ref.sug)) btns.push(`<button class="btn pri" ${h(()=>changeCard(e.ref.sug))}>Open change ${e.ref.sug}: source, tests, reviewers</button>`);
+  if(act) btns.push(`<button class="btn pri" ${h(()=>actModal(aiActs().find(a=>a.id===act)))}>Open ${act}: how this was produced and checked</button>`);
+  if(e.ref&&e.ref.p) btns.push(`<button class="btn" ${h(()=>openPdf(e.ref.p))}>Open protocol at p. ${e.ref.p}</button>`);
+  if(e.s&&S.role!=='site') btns.push(`<button class="btn" ${h(()=>{closeM();nav('cro','site',{croSite:e.s,siteTab:'overview'});})}>Open site ${e.s}</button>`);
+  if(/Change request (CR-\d+)/.test(e.x)&&S.role!=='site') btns.push(`<button class="btn" ${h(()=>{closeM();nav(S.role,'feedback');})}>Open change requests</button>`);
   $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:780px"><h2>Audit entry #${e.seq} ${madeBy(e)}<a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
     <h3>${e.x}</h3>
     <dl class="kv" style="margin-top:10px"><dt>When</dt><dd>${e.t}</dd><dt>Who</dt><dd>${e.u} · ${e.o}${e.o==='AI'?' <span class="muted">(the assistant; a draft or advice, never a decision)</span>':e.u==='System'?' <span class="muted">(a fixed rule, no judgement involved)</span>':''}</dd>

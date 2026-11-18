@@ -13,8 +13,8 @@ function vSchedule(){
       <p style="margin:0 0 10px">${D.verdictWhy}</p>
       <div class="pc2"><div><label>In its favour</label><ul>${pc.pros.map(p=>`<li>${icon('ok')}<span><b>${p[0]}.</b> ${p[1]}</span></li>`).join('')||'<li class="muted">Nothing stands out.</li>'}</ul></div>
         <div><label>Against it</label><ul>${pc.cons.map(p=>`<li>${icon(p[2]==='bad'?'bad':'warn')}<span><b>${p[0]}.</b> ${p[1]}</span></li>`).join('')||'<li class="muted">No drawbacks identified.</li>'}</ul></div></div>
-      <div class="decide" style="margin-top:10px">${chosen?`<button class="btn pri" ${go('sponsor','assist',{sTab:'changes'})}>Review its ${SUG.length} detailed changes ›</button>`:`<button class="btn ${D.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose Proposal ${k} for version 2</button>`}
-        <a ${go('sponsor','assist',{sTab:'options'})}>Compare all four side by side ›</a>
+      <div class="decide" style="margin-top:10px">${chosen?`<button class="btn pri" ${go('sponsor','assist',{sTab:'changes'})}>Review its ${SUG.length} detailed changes</button>`:`<button class="btn ${D.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose Proposal ${k} for version 2</button>`}
+        <a ${go('sponsor','assist',{sTab:'options'})}>Compare all four side by side</a>
         <span class="legend" style="margin-left:auto"><span><span class="chk">●</span> Unchanged</span><span><span class="plus">+</span> Accepted</span><span><span class="plus pending">+</span> Proposed</span><span><b>PK</b> = created for the PK subgroup only</span><span><b style="color:#c0392b">?</b> Needs a decision</span></span></div></div></div>`;
   return `<div class="ph"><h1>Schedule</h1>${seg}</div>${panel}${scheduleGrid(k)}<div style="margin-top:16px">${askBox('sponsor')}</div>`;
 }
@@ -47,7 +47,7 @@ function askAnswer(q,ctx){ const t=q.toLowerCase(), has=(...w)=>w.some(x=>t.incl
 function ask(q,ctx){ q=q.trim(); if(!q) return false; const r=askAnswer(q,ctx); S.chat[ctx].push({q:esc(q),r}); log(`Question to Audit: “${q.slice(0,90)}”`,ctx==='site'?S.mySite:''); aiLog(`Answered a question (AI-10). Advice only, not reviewed by a person: “${String(r.a).replace(/<[^>]+>/g,'').slice(0,110)}…”`,ctx==='site'?S.mySite:'',r.src?{p:r.src}:null); }
 function askBox(ctx){ const l=S.chat[ctx];
   return `<div class="card askbox"><h2><span class="assist">✦ Ask Audit</span> <span class="muted" style="font-weight:400;font-size:12px">Type a doubt in your own words. Answers come from the protocol and this study’s data.</span></h2><div class="bd">
-    ${l.map((m,i)=>`<div class="aq">${m.q}</div><div class="aa"><div class="aprov">${kindPill('ai')} Advice only. It changes nothing and no person has reviewed it${m.r.src?'; check the cited page':''}.</div>${m.r.a}${m.r.src?` <a ${h(()=>openPdf(m.r.src))}>Protocol p. ${m.r.src} ›</a>`:''}${m.r.b?`<div class="ab">${m.r.b.map(b=>`<button class="btn sm" ${h(()=>b.fn())}>${b.l}</button>`).join('')}</div>`:''}</div>`).join('')}
+    ${l.map((m,i)=>`<div class="aq">${m.q}</div><div class="aa"><div class="aprov">${kindPill('ai')} Advice only. It changes nothing and no person has reviewed it${m.r.src?'; check the cited page':''}.</div>${m.r.a}${m.r.src?` <a ${h(()=>openPdf(m.r.src))}>Protocol p. ${m.r.src}</a>`:''}${m.r.b?`<div class="ab">${m.r.b.map(b=>`<button class="btn sm" ${h(()=>b.fn())}>${b.l}</button>`).join('')}</div>`:''}</div>`).join('')}
     <div class="chips">${ASK_CHIPS[ctx].map(c=>`<a ${h(()=>ask(c,ctx))}>${c}</a>`).join('')}</div>
     <div style="display:flex;gap:8px"><input id="askin_${ctx}" class="askin" placeholder="${ctx==='site'?'e.g. What do I do if a sample falls on Sunday?':'e.g. Our sites cannot add a Day 2 visit. What are the alternatives?'}">
       <button class="btn pri" ${h(()=>ask($('askin_'+ctx).value,ctx))}>Ask</button></div>
@@ -85,7 +85,7 @@ function sampleWhy(st,p,r){ const x=p.x, rand=addDays(TODAY,-x.d), ref=pkRef(r.t
     :r.fixed?`${dn[dow]}. The window is only ±1 hour, so the sample cannot move to a weekday. Booked as calculated and flagged so the site can arrange cover.`
     :`${dn[dow]}. Moved to ${dn[r.book.getDay()]} at the same time, which is 24 hours ${dow===6?'earlier':'later'} and still inside the ±24 hour window.`;
   return `<table class="why">
-    ${whyRow(1,'What the protocol asks',`A PK blood sample <b>${r.hrs} hours</b> after the ${last?'6th (last)':'1st'} dose, allowed window <b>${r.win}</b>.`,`<a ${h(()=>openPdf(51))}>Protocol p. 51, Section 6.2.5 ›</a>`)}
+    ${whyRow(1,'What the protocol asks',`A PK blood sample <b>${r.hrs} hours</b> after the ${last?'6th (last)':'1st'} dose, allowed window <b>${r.win}</b>.`,`<a ${h(()=>openPdf(51))}>Protocol p. 51, Section 6.2.5</a>`)}
     ${whyRow(2,'This participant’s dose',`${last?'6th':'1st'} dose ${rec?'started':'is planned for'} <b>${tm(ref.dose)}</b>.${rec?'':' The plan updates to the actual time once dosing is recorded.'}`,rec?`Recorded by the site · IMP Administration form, Visit ${last?7:2}`:`Calculated · 1st dose date + 70 days`)}
     ${whyRow(3,'Adding the hours',`${tm(ref.dose)} + ${r.hrs} h = <b>${tm(r.nom)}</b>`,'Calculated · same result every time')}
     ${whyRow(4,r.past?'Why it is not requested':'Checking the calendar',cal,r.past?`Rule · no data is asked for in retrospect`:`Rule · move only if the window allows it`)}
@@ -129,13 +129,13 @@ function vSitePlan(){ const st=site(S.mySite), pl=sitePlan(st), live=!!S.dep[st.
       ${planSummary(st)}
       <p style="margin:12px 0 0"><a ${h(()=>{S.open.plhow=!S.open.plhow})}>${S.open.plhow?'▾ Hide how this plan is worked out':'▸ How is this plan worked out, and why can I rely on it?'}</a></p>
       ${S.open.plhow?`<div class="whybox"><table class="why">
-        ${whyRow(1,'It starts from the protocol','Samples are due 48, 144 and 240 hours after the 1st and the 6th dose, and 480 hours after the 6th. Windows: ±1 hour at 48 hours, ±24 hours for the rest.',`<a ${h(()=>openPdf(51))}>Protocol p. 51 ›</a>`)}
+        ${whyRow(1,'It starts from the protocol','Samples are due 48, 144 and 240 hours after the 1st and the 6th dose, and 480 hours after the 6th. Windows: ±1 hour at 48 hours, ±24 hours for the rest.',`<a ${h(()=>openPdf(51))}>Protocol p. 51</a>`)}
         ${whyRow(2,'It uses each participant’s own dose time','Taken from the dosing form your site entered. Nothing is estimated for doses already given.','Recorded by the site')}
         ${whyRow(3,'It adds the hours','Dose time plus the protocol hours gives the date and time. No AI judgement is involved.','Calculated · same result every time')}
         ${whyRow(4,'It checks the calendar','A weekend sample moves to the nearest weekday only when the window allows it. Otherwise it is flagged, not hidden.','Rule')}
         ${whyRow(5,'A person confirms it','The plan is a proposal until your coordinator confirms each participant. Confirmations are in the audit trail.','Recorded by the site')}</table>
-        <div class="muted" style="margin-top:6px">Open a participant below for what their plan is based on, then click any sample for the steps behind its date. <a ${h(()=>actModal(aiActs().find(a=>a.id==='AI-09')))}>See this step in the AI Record ›</a></div></div>`:''}
+        <div class="muted" style="margin-top:6px">Open a participant below for what their plan is based on, then click any sample for the steps behind its date. <a ${h(()=>actModal(aiActs().find(a=>a.id==='AI-09')))}>See this step in the AI Record</a></div></div>`:''}
       <div class="decide" style="margin-top:12px"><button class="btn" ${pl.aff.length?h(()=>planExport(st,'ics')):'disabled'}>Add to calendar (.ics)</button><button class="btn" ${pl.aff.length?h(()=>planExport(st,'csv')):'disabled'}>Export plan (CSV)</button>
         ${pl.aff.length&&pl.done<pl.aff.length?`<button class="btn org" ${h(()=>{pl.aff.forEach(p=>{ if(!S.plan[p.x.id]) S.plan[p.x.id]={by:me().n,at:now()}; });log(`Transition plan confirmed for all ${pl.aff.length} affected participants`,st.id);})}>Confirm all plans</button>`:''}
-        <a style="margin-left:auto" ${go('site','changes')}>Back to Amendment Changes ›</a></div></div></div>
+        <a style="margin-left:auto" ${go('site','changes')}>Back to Amendment Changes</a></div></div></div>
     ${planTable(st,true)}${askBox('site')}`); }
