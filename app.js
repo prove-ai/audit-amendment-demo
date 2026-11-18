@@ -485,7 +485,7 @@ function vRollout(){
     <td class="nw" ${s.irb?'':h(()=>ecModal(s))}>${s.irb?`${icon('ok')} ${s.irb}`:`${icon('warn')} Pending · <a>Record…</a>`}</td><td class="r"><u>${dep?2:1}</u></td><td class="r">${s.subs.length}</td>
     <td class="r"><b>${x.aff||'—'}</b></td><td class="r">${x.soon||'—'}</td>
     <td class="nw">${S.ack[s.id]?`${icon('ok')} Acknowledged`:dep?'<span class="pill med">Awaiting site</span>':!eligible(s)?'<span class="pill gray">Held on v1</span>':'<span class="muted">—</span>'}</td></tr>`}).join('');
-  return `<div class="ph"><div><h1>Sites</h1><div class="sub">Amendment rollout: Protocol Ver. 1.1 → casebook version 2. Click a site to see its subjects, documents, contacts and audit trail.</div></div>
+  return `<div class="ph"><div><h1>Sites</h1></div>
     <div class="acts"><span class="pill gray">Selected ${picked.length}</span>
       <button class="btn pri" ${can?h(()=>signModal({title:'Set Active Version',text:`You are setting <b>casebook version 2</b> as the active version at <b>${picked.length} site(s)</b>: ${picked.map(s=>s.id).join(', ')}. Amendment type: prospective.`,meanings:['Approval – site rollout authorised'],
         done:()=>{deploy(picked.map(s=>s.id));render();infoModal('Job Queued','An amendment job has been queued. Sites are notified in Site Connect and asked to acknowledge. Navigate to Job History to monitor status.',`<button class="btn" ${h(()=>{closeM();nav('cro','jobs');})}>Job History</button>`);}})):'disabled'}>Set Active Version…</button>

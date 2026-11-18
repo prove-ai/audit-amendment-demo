@@ -101,11 +101,12 @@ function dia(k){ const n=(t,c)=>`<span class="${c||''}">${t}</span>`, g='new', d
 function optNums(k){ const d=DESIGNS[k], act=x=>x.d!=='DONE', nPk=total(s=>s.subs.filter(x=>x.pk===true&&act(x)).length), nAll=total(s=>s.subs.filter(act).length), cn=SITES.filter(s=>s.cn).length;
   return [['New visits in the schedule',d.kind==='events'?7:d.kind==='rows'?0:'1 (repeating)'],['Participants who see a change',d.all?`${nAll} (all)`:`${nPk} (PK subgroup)`],['Sites with a change in data entry',d.all?`${SITES.length} of ${SITES.length}`:`${cn} of ${SITES.length}`]]; }
 function vOptions(){ const lock=!!S.signed, cur=S.design, mk={ok:'ok',mid:'warn',bad:'bad'};
-  const card=k=>{const d=DESIGNS[k],v=VERD[d.verdict],on=cur===k;return `<div class="opt ${on?'on':''} v-${d.verdict}">
-    <div class="oh"><b>Option ${k}</b><span class="pill ${v[0]}">${v[1]}</span></div><h3>${d.name}</h3><p>${d.short}</p>${dia(k)}
-    <table class="mini">${optNums(k).map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td></tr>`).join('')}</table>
+  const card=k=>{const d=DESIGNS[k],v=VERD[d.verdict],on=cur===k,o=S.open['opt'+k];return `<div class="opt ${on?'on':''} ${o?'open':''}">
+    <div class="oh" title="${o?'Click to close':'Click to see the details'}" ${h(()=>{S.open['opt'+k]=!o})}><h3><span class="tw">${o?'▾':'▸'}</span>${d.name}</h3><span class="pill ${v[0]}">${on?'Chosen · ':''}${v[1]}</span></div>
+    ${o?`<p>${d.short}</p>${dia(k)}
+    <table class="mini">${optNums(k).map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
     <div class="of">${on?`<span class="dstat accepted">Chosen</span> <a ${h(()=>{S.sTab='changes'})}>Review its ${SUG.length} changes</a>`
-      :`<button class="btn ${d.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose option ${k}</button>`}</div></div>`;};
+      :`<button class="btn ${d.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose option ${k}</button>`}</div>`:''}</div>`;};
   return `${lock?`<div class="note green">${icon('ok')}<div>Casebook version 2 was approved with <b>Option ${cur}</b>. The choice is locked.</div></div>`:''}
   <div class="opts4">${Object.keys(DESIGNS).map(card).join('')}</div>
   <div class="card"><h2>How the options compare</h2><div class="bd" style="padding:0"><table class="v map"><tr><th style="width:21%">What matters</th>${Object.keys(DESIGNS).map(k=>`<th class="${cur===k?'cur':''}">Option ${k}${DESIGNS[k].verdict==='rec'?' ★':''}</th>`).join('')}</tr>
