@@ -100,6 +100,8 @@ function dia(k){ const n=(t,c)=>`<span class="${c||''}">${t}</span>`, g='new', d
   return `<div class="muted" style="font-size:12px;margin-top:4px">${d.all?'Created for <b>every</b> participant':'For PK-subgroup participants only'}</div>`; }
 function optNums(k){ const d=DESIGNS[k], act=x=>x.d!=='DONE', nPk=total(s=>s.subs.filter(x=>x.pk===true&&act(x)).length), nAll=total(s=>s.subs.filter(act).length), cn=SITES.filter(s=>s.cn).length;
   return [['New visits in the schedule',d.kind==='events'?7:d.kind==='rows'?0:'1 (repeating)'],['Participants who see a change',d.all?`${nAll} (all)`:`${nPk} (PK subgroup)`],['Sites with a change in data entry',d.all?`${SITES.length} of ${SITES.length}`:`${cn} of ${SITES.length}`]]; }
+function fold(key,title,body,pad){ const o=S.open[key];
+  return `<div class="card fold ${o?'open':''}"><h2 ${h(()=>{S.open[key]=!o})}><span class="tw">${o?'▾':'▸'}</span>${title}</h2>${o?`<div class="bd"${pad===0?' style="padding:0"':''}>${body}</div>`:''}</div>`; }
 function vOptions(){ const lock=!!S.signed, cur=S.design, mk={ok:'ok',mid:'warn',bad:'bad'};
   const card=k=>{const d=DESIGNS[k],v=VERD[d.verdict],on=cur===k;return `<div class="opt ${on?'on':''}">
     <div class="oh"><h3>${d.name}</h3><span class="pill ${v[0]}">${on?'Chosen · ':''}${v[1]}</span></div>
@@ -108,14 +110,13 @@ function vOptions(){ const lock=!!S.signed, cur=S.design, mk={ok:'ok',mid:'warn'
     <div class="of">${on?`<span class="dstat accepted">Chosen</span> <a ${h(()=>{S.sTab='changes'})}>Review its ${SUG.length} changes</a>`
       :`<button class="btn ${d.verdict==='rec'?'pri':''}" ${lock?'disabled':h(()=>{applyDesign(k)})}>Choose option ${k}</button>`}</div></div>`;};
   return `${lock?`<div class="note green">${icon('ok')}<div>Casebook version 2 was approved with <b>Option ${cur}</b>. The choice is locked.</div></div>`:''}
-  <div class="opts4">${Object.keys(DESIGNS).map(card).join('')}</div>
-  <div class="card"><h2>How the options compare</h2><div class="bd" style="padding:0"><table class="v map"><tr><th style="width:21%">What matters</th>${Object.keys(DESIGNS).map(k=>`<th class="${cur===k?'cur':''}">Option ${k}</th>`).join('')}</tr>
-    ${MATRIX.map(r=>`<tr><td>${r[0]}</td>${Object.keys(DESIGNS).map(k=>`<td class="${cur===k?'cur':''}">${icon(mk[r[1][k][0]])} ${r[1][k][1]}</td>`).join('')}</tr>`).join('')}</table></div></div>
-  <div class="card"><h2>Why Option A, and why not the others</h2><div class="bd"><ul class="clean plain">${Object.keys(DESIGNS).map(k=>`<li>${icon({rec:'ok',ok:'warn',no:'bad'}[DESIGNS[k].verdict])}<div><b>Option ${k} · ${VERD[DESIGNS[k].verdict][1]}.</b> ${DESIGNS[k].verdictWhy}</div></li>`).join('')}</ul></div></div>
-  ${lock?'':`<div class="decide" style="border-top:0;padding-top:0">
+  ${fold('fopt','Schema options'+(cur?` <span class="muted">· Option ${cur} chosen</span>`:''),`<div class="opts4">${Object.keys(DESIGNS).map(card).join('')}</div>
+  ${lock?'':`<div class="decide" style="border-top:0;padding-top:0;margin:0">
     ${cur?`<button class="btn pri" ${h(()=>{S.sTab='changes'})}>Continue with Option ${cur}: review ${SUG.length} changes</button>`:`<button class="btn pri" ${h(()=>{applyDesign('A');S.sTab='changes'})}>Accept the recommendation (Option A) and continue</button>`}
-    <button class="btn" ${h(()=>crModal({about:'Schema options',title:'None of these fit: request changes',intro:'Say what does not work and what should be tried. The request goes to the study build team and is recorded in the audit trail.',ret:true}))}>None of these fit: request changes…</button>
-    <span class="muted">${cur?'You can switch option until you approve; switching clears the decisions made so far.':'Nothing is changed in the casebook until you approve and sign.'}</span></div>`}`; }
+    <button class="btn" ${h(()=>crModal({about:'Schema options',title:'None of these fit: request changes',intro:'Say what does not work and what should be tried. The request goes to the study build team and is recorded in the audit trail.',ret:true}))}>None of these fit: request changes…</button></div>`}`)}
+  ${fold('fcmp','How the options compare',`<table class="v map"><tr><th style="width:21%">What matters</th>${Object.keys(DESIGNS).map(k=>`<th class="${cur===k?'cur':''}">Option ${k}</th>`).join('')}</tr>
+    ${MATRIX.map(r=>`<tr><td>${r[0]}</td>${Object.keys(DESIGNS).map(k=>`<td class="${cur===k?'cur':''}">${r[1][k][1]}</td>`).join('')}</tr>`).join('')}</table>
+    <div class="whyopt"><h3>Why Option A, and why not the others</h3><ul class="clean plain">${Object.keys(DESIGNS).map(k=>`<li><div><b>Option ${k} · ${VERD[DESIGNS[k].verdict][1]}.</b> ${DESIGNS[k].verdictWhy}</div></li>`).join('')}</ul></div>`,0)}`; }
 
 /* ---------- change requests ---------- */
 function addCR(o){ const m=me(), c=Object.assign({id:'CR-'+String(S.cr.length+1).padStart(3,'0'),at:now(),u:m.n,o:m.o,status:'Open'},o); S.cr.unshift(c);

@@ -395,7 +395,7 @@ function fastSponsor(){ if(!S.design) applyDesign('A',true); S.ret=null; SUG.for
   S.signed={by:'Elena Marsh',at:now(),meaning:'Approval'}; log('Casebook version 2 approved by electronic signature (Approval)','',m); }
 function vAssist(){
   const s=sug(S.sel), d=S.dec[s.id], hi=SUG.filter(x=>x.conf==='high'&&S.dec[x.id]==='pending').length, lock=!!S.signed, all=reviewed()===SUG.length;
-  const head=`<div class="ph"><div><h1>Audit</h1><div class="sub">Protocol Ver. 1.1 (16 May 2017) compared with casebook version 1 · ${SUG.length} suggested changes · each one cites the protocol text it came from${S.design?` · <b>Schema option ${S.design}</b>: ${DES().name}`:''}</div></div>
+  const head=`<div class="ph"><div><h1>Audit</h1><div class="sub">Protocol Ver. 1.1 compared with casebook version 1 · ${SUG.length} suggested changes</div></div>
     ${lock?'<span class="pill solid">CASEBOOK V2 APPROVED</span>':'<span class="pill blue">IN REVIEW</span>'}
     <div class="acts"><button class="btn" ${h(()=>openPdf(44))}>View Protocol</button>${lock?'':`<button class="btn pri" ${h(()=>{S.sTab='approve'})}>Approve Casebook v2…</button>`}</div></div>
     ${S.ret?`<div class="note" style="background:var(--red-soft);border-color:#eab8b0">${icon('bad')}<div><b>Returned for rework (${S.ret}).</b> ${(S.cr.find(c=>c.id===S.ret)||{}).problem||''} Approval is blocked until the request is resolved. <a ${go('sponsor','feedback')}>Open change requests</a></div></div>`:''}
