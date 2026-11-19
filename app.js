@@ -316,6 +316,17 @@ function evidence(s){
     return `<div class="doc"><div class="cap"><span>Protocol Ver. 1.1 · p. 44 · Table 1 Time and Events Schedule</span>${link}</div>
       <table>${row('Day(s)','day',e=>e.day)}${row('Allowed window for visit (days)','win',e=>e.win)}${row('Visits','id',e=>e.id.replace('V','V '))}${b.row?row('Blood sampling for PK assessments <sup>e</sup>','pk',()=>'●'):''}</table></div>`; }).join('');
 }
+function compareSheet(){ const c=S.cmp, PL={'Event':'Events','Event window':'Event windows','Rule':'Rules','Schedule':'Schedule','Codelist':'Codelists','Review plan':'Review plans'};
+  const all=SUG.flatMap(s=>s.diff.map(d=>({s,d}))).filter(x=>!c.acc||S.dec[x.s.id]==='accepted'), types=[...new Set(all.map(x=>x.d[0]))];
+  const tab=types.includes(c.tab)?c.tab:'', list=all.filter(x=>!tab||x.d[0]===tab), H=['Object type','Name','Change','Version 1','Version 2','Source','Decision'];
+  const rows=list.map((x,i)=>{ const s=x.s,d=x.d,st=S.dec[s.id]; let v2=d[4];
+    if(s.role==='winGap') v2=acc(s.id)?{pm1:'±1 day',exact:'Exact day',open:'No window (clarification raised)'}[S.opt[s.id]]:'Undecided';
+    return `<tr class="click ${st==='rejected'?'strike':''}" title="Open ${s.id}" ${go('sponsor','assist',{sTab:'changes',sel:s.id})}><th>${i+2}</th><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td><td>${d[3]}</td><td>${v2}</td><td><a>${s.id}</a></td><td>${decTxt(st)}</td></tr>`; }).join('');
+  return `<div class="sheet"><div class="sheetbar"><span>${list.length} row${list.length===1?'':'s'} · Removed: none · Existing data affected: none</span>
+      <label ${h(()=>{c.acc=!c.acc})}><input type="checkbox" ${c.acc?'checked':''}>Accepted changes only</label></div>
+    <div class="sheetgrid"><table><tr class="cols"><th></th>${H.map((x,i)=>`<th>${'ABCDEFG'[i]}</th>`).join('')}</tr>
+      <tr class="hd"><th>1</th>${H.map(x=>`<td>${x}</td>`).join('')}</tr>${rows||'<tr><th>2</th><td colspan="7" class="muted">No rows on this sheet.</td></tr>'}</table></div>
+    <div class="sheettabs"><button class="${tab?'':'on'}" ${h(()=>{c.tab=''})}>All changes (${all.length})</button>${types.map(t=>`<button class="${tab===t?'on':''}" ${h(()=>{c.tab=t})}>${PL[t]||t} (${all.filter(x=>x.d[0]===t).length})</button>`).join('')}</div></div>`; }
 function compareTable(short){
   let rows=''; const c=S.cmp; SUG.forEach(s=>s.diff.forEach(d=>{ const st=S.dec[s.id]; let v2=d[4];
     if(!short&&((c.ev&&/^Event/.test(d[0]))||(c.rules&&d[0]==='Rule')||(c.plans&&d[0]==='Review plan')||(c.acc&&st!=='accepted'))) return;
@@ -466,9 +477,9 @@ function vApprove(){
       <span class="muted">${S.ret?'Returned for rework: resolve '+S.ret+' first.':ready?'All checks complete. Your electronic signature is required.':'Complete the items under "Before you approve".'}</span></div>`}
   </div></div></div>`;
 }
-const vCompare=()=>`<div class="ph"><div><h1>Compare Versions</h1><div class="sub">Casebook version 1 (active in production) against version 2 (${S.signed?'approved':'draft'}). Rows follow your decisions in Audit.</div></div>
+const vCompare=()=>`<div class="ph"><div><h1>Compare Versions</h1><div class="sub">Casebook version 1 (active in production) against version 2 (${S.signed?'approved':'draft'}). Click a row to open the change.</div></div>
   <div class="acts"><button class="btn" ${h(()=>{S.view='v2';nav('sponsor','schedule')})}>View as schedule</button><button class="btn" ${h(()=>download('Diff_CTJ301UC201_1_to_2.csv',['Object type,Name,Change,Version 1,Version 2,Source,Decision'].concat(SUG.flatMap(s=>s.diff.map(d=>[...d.slice(0,5),s.id,S.dec[s.id]].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')))).join('\n'),'text/csv')&&false)}>Export difference report</button></div></div>
-  <div class="bar" style="flex-wrap:wrap">${[['ev','Exclude Event Group and Event Differences (show only form differences)'],['rules','Exclude Rules'],['plans','Exclude Review Plans'],['acc','Show accepted changes only']].map(o=>`<label style="display:flex;gap:5px;align-items:center;cursor:pointer" ${h((e,el)=>{S.cmp[o[0]]=!S.cmp[o[0]]})}><input type="checkbox" ${S.cmp[o[0]]?'checked':''}>${o[1]}</label>`).join('')}</div>${compareTable()}`;
+  ${compareSheet()}`;
 const vAudit=(f,sub)=>`<div class="ph"><div><h1>Audit Trail</h1><div class="sub">${sub||'Every decision, validation, signature, deployment, task and query for this amendment, across sponsor, CRO and sites. Each entry is chained to the one before it.'}</div></div><div class="acts"><button class="btn" ${h(openPacket)}>Inspection Packet</button></div></div>${auditTable(f)}`;
 
 /* ================= CRO (EDC Tools) ================= */

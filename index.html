@@ -496,6 +496,15 @@ table.why tr:first-child td{border-top:0} table.why td.n{width:22px;color:#888;p
 .ws .search.left{margin:0 auto 0 0}
 .ws .card.fold{margin-bottom:10px} .ws .card.fold>h2{cursor:pointer;display:flex;gap:8px;align-items:baseline} .ws .card.fold>h2:hover{background:#f6f6f6} .ws .card.fold:not(.open)>h2{border-bottom:0} .ws .card.fold .tw{color:#888;font-weight:400;flex:none} .ws .card.fold>h2 .muted{font-weight:400;font-size:13.5px}
 .ws .card.fold .opts4{margin-bottom:14px} .ws .whyopt{padding:14px 18px;border-top:1px solid var(--line)} .ws .whyopt h3{font-size:14.5px;margin:0 0 6px}
+.sheet{border:1px solid #c9c9c9;background:#fff;border-radius:4px;overflow:hidden}
+.sheetbar{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1px solid #d9d9d9;font-size:12.5px;color:#555} .sheetbar label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.sheetgrid{overflow:auto;max-height:62vh} .sheetgrid table{border-collapse:collapse;width:100%;font-size:13.5px}
+.sheetgrid td,.sheetgrid th{border:1px solid #e1e1e1;padding:5px 9px;text-align:left;vertical-align:top;font-weight:400}
+.sheetgrid th{background:#f3f3f3;color:#777;text-align:center;font-size:12px;width:38px;min-width:38px} .sheetgrid tr.cols th{position:sticky;top:0;z-index:2;width:auto}
+.sheetgrid tr.hd td{font-weight:600;background:#fafafa;position:sticky;top:25px;z-index:1} .sheetgrid tr.click:hover td{background:#f4f7fb} .sheetgrid tr.strike td{text-decoration:line-through;color:#999}
+.sheettabs{display:flex;gap:0;border-top:1px solid #c9c9c9;background:#f3f3f3;overflow-x:auto;padding-left:38px}
+.sheettabs button{border:0;border-right:1px solid #d9d9d9;background:none;padding:7px 14px;font:inherit;font-size:13px;color:#555;cursor:pointer;white-space:nowrap} .sheettabs button:first-child{border-left:1px solid #d9d9d9}
+.sheettabs button:hover{background:#eaeaea} .sheettabs button.on{background:#fff;color:#111;font-weight:600;box-shadow:inset 0 2px 0 var(--orange);margin-top:-1px}
 @media print{ #app,.toast{display:none} .ovl{position:static;background:none;display:block} .modal.wide{width:auto;height:auto;max-height:none;box-shadow:none} .modal .bd{overflow:visible} .modal h2 a{display:none} }
 </style>
 </head>
