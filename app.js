@@ -558,18 +558,18 @@ function vSiteChanges(){
   const hold=!s.irb?`<div class="note">${icon('warn')}<div>Your EC has not yet approved Protocol Ver. 1.1 (submitted ${s.sub}). Your site stays on casebook version 1 and nothing changes until approval is recorded.</div></div>`:'';
   return scPage([['Amendment Changes',null,1]],`
     ${ackd?`<div class="note green">${icon('ok')}<div><b>Acknowledged.</b> ${ackd.by} · ${ackd.at}. The CRO and sponsor can see your acknowledgement.</div></div>`:short+hold}
-    <div class="card"><h2>Protocol Ver. 1.1: what changes at ${s.id} ${status}</h2><div class="bd">
+    ${fold('sc1',`Protocol Ver. 1.1: what changes at ${s.id} ${status}`,`
       <ul class="clean">${siteFacts(s).map(f=>`<li>${icon(f[0])}<div>${f[1]}</div></li>`).join('')}</ul>
       <p style="margin:10px 0 0"><a ${h(()=>openDoc(s,siteDocs(s)[0]))}>Read the protocol</a> &nbsp; ${S.signed?`<a ${h(()=>openDoc(s,siteDocs(s).find(d=>d.id==='chg')))}>See old vs new casebook</a> &nbsp; `:''}<a ${go('site','plan')}><b>See the plan for each participant</b></a> &nbsp; <a ${openEdc(s.id)}>Open EDC</a> &nbsp; <a ${go('site','contacts')}>Who to ask</a></p>
-    </div></div>
-    ${s.cn?`<div class="card"><div class="bd" style="padding:0">${subjectsTable(s)}</div></div>`:''}
-    <div class="card"><h2>Before you acknowledge</h2><div class="bd">
+`)}
+    ${s.cn?fold('sc2','Participants at '+s.id,subjectsTable(s),0):''}
+    ${fold('sc3','Before you acknowledge',`
       ${items.map(i=>`<div class="gate">${i[3]==='tick'?`<input type="checkbox" style="margin:3px 2px 0 2px" ${i[0]?'checked':''} ${ackd?'disabled':h((e,el)=>{S.brief[s.id]=el.checked})}>`:icon(i[0]?'ok':'wait')}<div><b>${i[1]}</b><span class="muted">${i[2]}</span></div>${!i[0]&&i[3]?(i[3]==='plan'?`<a class="go" ${go('site','plan')}>Open Transition Plan</a>`:`<a class="go" ${go('site','docs',{dxTab:i[3]==='tasks'?'actions':'documents'})}>${i[3]==='tasks'?'Open Document Actions':'Open Documents'}</a>`):''}</div>`).join('')}
       ${ackd?'':`<div class="decide"><button class="btn org" ${ok?h(()=>signModal({title:'Acknowledge Casebook Update',text:`You confirm that <b>${s.id}</b> has reviewed the changes introduced by Protocol Ver. 1.1 and is ready to collect data on casebook version 2.`,meanings:['Acknowledgement – site has reviewed and is ready'],
           done:()=>{S.ack[s.id]={by:me().n,at:now()};log('Site acknowledged casebook version 2 by electronic signature',s.id);render();}})):'disabled'}>Acknowledge and Sign…</button>
         <button class="btn" ${h(()=>crModal({about:`Casebook v2 at ${s.id}`,site:s.id,title:'Report a problem with this change',intro:'Use this if the change does not work at your site as described. Say what does not work and what you would need instead. The CRO and sponsor see it straight away.',to:['CRO clinical site manager','Sponsor study build team']}))}>Cannot acknowledge: report a problem…</button>
         <span class="muted">${ok?'Everything is in place.':'Complete the open items above to enable.'}</span></div>`}
-    </div></div>${S.cr.some(c=>c.site===s.id)?`<div class="card"><h2>Your change requests</h2><div class="bd" style="padding:4px 12px 8px">${crTable(c=>c.site===s.id)}</div></div>`:''}${thread(s)}`);
+`)}${S.cr.some(c=>c.site===s.id)?`<div class="card"><h2>Your change requests</h2><div class="bd" style="padding:4px 12px 8px">${crTable(c=>c.site===s.id)}</div></div>`:''}${thread(s)}`);
 }
 function vSiteComms(){ const s=site(S.mySite), x=stats(s);
   const A=[[S.ack[s.id]?'':'<span class="udot"></span>','Protocol Ver. 1.1: casebook update for your site',s.cn?`${x.aff} of your participants gain new PK sampling visits. Review what changes and acknowledge.`:'No change in data entry at your site. Please review and acknowledge.','Today','changes'],

@@ -110,7 +110,7 @@ function trustNums(){ const a=aiActs(), need=a.filter(x=>x.rev.ok!==null), ch=SU
     doubt:SUG.filter(s=>s.conf!=='high').length+1,ch}; }
 function trustBar(){ const n=trustNums();
   return `<div class="trustbar"><span class="assist">AI Record</span><span>${n.ai} items drafted by AI · ${n.calc} calculated by rule · <b>${n.done} of ${n.need}</b> automated steps reviewed by a named person${n.wait?` · ${n.wait} waiting`:''}</span><a ${go(S.role,'trust')}>Audit</a></div>`; }
-function actModal(a){ const sec=(l,b)=>`<div class="sec"><label>${l}</label>${b}</div>`;
+function actModal(a){ const sec=(l,b)=>`<details class="dsec"><summary>${l}</summary><div>${b}</div></details>`;
   $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:720px"><h2>${a.id} ${kindPill(a.k)}<a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
     <h3>${a.t}</h3><div class="muted">${KIND[a.k][1]}</div>
     ${sec('What it produced',a.out)}
@@ -136,6 +136,5 @@ function vTrust(){ const n=trustNums(), f=S.tf||'all', sc=S.role==='site', kids=
     <div class="bar" style="margin-top:14px"><div class="seg">${[['all','Everything automated'],['wait','Waiting for a person'],['ai','AI drafts only']].map(x=>`<button class="${f===x[0]?'on':''}" ${h(()=>{S.tf=x[0]})}>${x[1]}</button>`).join('')}</div>
       <span class="sp"></span><button class="btn" ${h(()=>{S.af={q:'',org:'AI',site:''};nav(S.role,sc?'admin':'audit');})}>AI entries in the audit trail</button><button class="btn" ${h(openPacket)}>Inspection Packet</button></div>
     <table class="v tr"><tr><th>ID</th><th>What was produced</th><th>How</th><th>Based on · checks</th><th>Reviewed by a person</th></tr>${rows||'<tr><td colspan="5" class="muted">Nothing matches this filter.</td></tr>'}</table>`;
-  const sub='Everything in this amendment that was produced automatically: what it was based on, how it was checked, what the assistant was unsure of, and which named person reviewed it.';
-  return sc?scPage([['AI Record',null,1]],body):`<div class="ph"><div><h1>AI Record</h1><div class="sub">${sub}</div></div></div>${body}`;
+  return sc?scPage([['AI Record',null,1]],body):`<div class="ph"><div><h1>AI Record</h1></div></div>${body}`;
 }

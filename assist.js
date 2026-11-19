@@ -101,7 +101,7 @@ function planWhy(st,p){ const x=p.x, rand=addDays(TODAY,-x.d), d1=pkRef(TPS[0],r
     <div class="muted" style="margin-top:6px">Nothing here was written by the AI. Every date is calculated from the dose time, so you can redo it by hand. Click a sample row to see the steps for that date.</div></div>`; }
 function planTable(st,edit){ const pl=sitePlan(st);
   if(!pl.aff.length) return `<div class="note blue"><div>${pl.maybe?`No participant at this site needs a new plan today. ${pl.maybe} participant(s) in screening will get one automatically if they are assigned to the PK subgroup at randomisation.`:'No participant at this site is affected, so there is nothing to re-plan.'}</div></div>`;
-  return pl.aff.map(p=>{ const x=p.x, open=S.open['pl'+x.id]!==false, ok=S.plan[x.id];
+  return pl.aff.map(p=>{ const x=p.x, open=!!S.open['pl'+x.id], ok=S.plan[x.id];
     return `<div class="card plan"><h2 style="cursor:pointer" ${h(()=>{S.open['pl'+x.id]=!open})}>${open?'▾':'▸'} ${x.id} <span class="muted" style="font-weight:400">Study day ${x.d} · ${p.up.length} new sample(s) to schedule · next ${fdt(p.next.book)}</span>
         ${p.blocked?'<span class="pill dec">Blocked: consent v2.0 not signed</span>':''}${p.up.some(r=>r.fixed)?'<span class="pill med">Weekend sample</span>':''}
         <span style="margin-left:auto">${ok?`<span class="dstat accepted">Plan confirmed</span>`:edit?`<button class="btn sm pri" ${h(e=>{e.stopPropagation&&e.stopPropagation();S.plan[x.id]={by:me().n,at:now()};log(`Transition plan confirmed for ${x.id}: ${p.up.length} new sample(s), first ${fd(p.next.book)}`,st.id);})}>Confirm plan</button>`:'<span class="muted">Not yet confirmed by the site</span>'}</span></h2>
