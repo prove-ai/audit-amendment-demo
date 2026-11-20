@@ -1,8 +1,8 @@
-/* PSYNC – AI Record. For everything the assistant drafted or a fixed rule calculated in this amendment:
+/* PAMS – AI Record. For everything the assistant drafted or a fixed rule calculated in this amendment:
    what it was based on, how it was tested, what the assistant was unsure of, and which named person reviewed it.
    Loaded before app.js. Test results are simulated in this demo; the rules they describe run live in Data Entry. */
 
-const AI={n:'PSYNC assistant',o:'AI'};
+const AI={n:'PAMS assistant',o:'AI'};
 const aiLog=(x,sid,ref)=>log(x,sid,AI,ref);
 const KIND={ai:['AI draft','Written by the assistant after reading the documents. It can be wrong, so a named person has to review it.'],
   calc:['Calculated','Worked out by a fixed rule from recorded data. The same inputs always give the same result, and the rule is shown.']};
@@ -109,7 +109,7 @@ function trustNums(){ const a=aiActs(), need=a.filter(x=>x.rev.ok!==null), ch=SU
   return {a,ai:a.filter(x=>x.k==='ai').length-1+SUG.length,calc:a.filter(x=>x.k==='calc').length,done:need.filter(x=>x.rev.ok).length,need:need.length,wait:need.filter(x=>!x.rev.ok).length,
     doubt:SUG.filter(s=>s.conf!=='high').length+1,ch}; }
 function trustBar(){ const n=trustNums();
-  return `<div class="trustbar"><span class="assist">AI Record</span><span>${n.ai} items drafted by AI · ${n.calc} calculated by rule · <b>${n.done} of ${n.need}</b> automated steps reviewed by a named person${n.wait?` · ${n.wait} waiting`:''}</span><a ${go(S.role,'trust')}>PSYNC</a></div>`; }
+  return `<div class="trustbar"><span class="assist">AI Record</span><span>${n.ai} items drafted by AI · ${n.calc} calculated by rule · <b>${n.done} of ${n.need}</b> automated steps reviewed by a named person${n.wait?` · ${n.wait} waiting`:''}</span><a ${go(S.role,'trust')}>PAMS</a></div>`; }
 function actModal(a){ const sec=(l,b)=>`<details class="dsec"><summary>${l}</summary><div>${b}</div></details>`;
   $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:720px"><h2>${a.id} ${kindPill(a.k)}<a ${h(closeM)}>Close ✕</a></h2><div class="bd detail">
     <h3>${a.t}</h3><div class="muted">${KIND[a.k][1]}</div>
