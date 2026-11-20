@@ -626,7 +626,7 @@ function openStudies(){ const g=CTG.study;
     ${CTG.others.map(o=>`<tr><td class="nw"><b>${o.num}</b><div class="muted" style="font-size:12px">${o.nct}</div></td><td>${o.brief}</td><td>${o.sponsor}</td><td>${o.status}</td><td class="r">${o.enroll}</td><td class="r">${o.sites}</td><td class="r">${o.countries}</td><td class="nw"><span class="muted">None open</span> · <a href="https://clinicaltrials.gov/study/${o.nct}" target="_blank">registry</a></td></tr>`).join('')}</table>
     <p class="muted" style="margin-bottom:0">Only ${g.num} is loaded with a casebook in this demo. The other rows are real phase 2 ulcerative colitis studies listed for context.</p></div></div></div>`; return false; }
 
-const BRAND=n=>`<span class="brand" style="font-size:${n}px" aria-label="RELAY">RELA<svg width="${(n*0.78).toFixed(1)}" height="${(n*0.86).toFixed(1)}" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 14.5V21" stroke="currentColor" stroke-width="3.4" fill="none"/><path d="M2.5 7.5l7.5 7L18.5 1.5" stroke="#f5921b" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
+const BRAND=n=>`<span class="brand" style="font-size:${n}px" aria-label="RELAY">REL<svg width="${(n*0.84).toFixed(1)}" height="${(n*0.8).toFixed(1)}" viewBox="0 1.5 20 18" aria-hidden="true"><path d="M1 2h5l4 10 4-10h5L12 19H8z" fill="#f5921b" transform="rotate(180 10 10.5)"/></svg>Y</span>`;
 const toSignIn=(role,mode)=>h(()=>{ if(role) S.auth.role=role; if(mode) S.auth.mode=mode; S.auth.email=''; S.home='signin'; window.scrollTo(0,0); });
 const scrollTo=id=>`onclick="document.getElementById('${id}').scrollIntoView({behavior:'smooth'})"`;
 function vSignIn(){ const a=S.auth, d=demoAcct(a.role);
