@@ -1,4 +1,4 @@
-/* PAMS – schema options (four alternative casebook designs for the same amendment),
+/* PAMIS – schema options (four alternative casebook designs for the same amendment),
    the comparison map, and change requests (reject + say what to try). Loaded before app.js; initDesigns() is called from app.js. */
 
 let TPS=[], A_SUG=[], C_SUG=[], D_SUG=[];
@@ -125,7 +125,7 @@ function crModal(o){
   $('layer').innerHTML=`<div class="ovl"><div class="modal" style="width:600px"><h2>${o.title}</h2><div class="bd"><p style="margin-top:0">${o.intro}</p>
     <div class="fld"><label>What does not work?</label><textarea id="crp" class="req" rows="3" placeholder="e.g. Our sites cannot schedule a Day 2 visit; participants stay overnight after the first dose."></textarea></div>
     <div class="fld"><label>What should be changed or tried instead?</label><textarea id="cra" rows="3" placeholder="e.g. Record the 48 h sample as part of Visit 2 and keep separate visits for Day 6 and Day 10."></textarea></div>
-    <div class="fld"><label>Send to</label><select id="crt">${(o.to||['Sponsor study build team','PAMS: redraft with this feedback','CRO clinical site manager']).map(x=>`<option>${x}</option>`).join('')}</select></div></div>
+    <div class="fld"><label>Send to</label><select id="crt">${(o.to||['Sponsor study build team','PAMIS: redraft with this feedback','CRO clinical site manager']).map(x=>`<option>${x}</option>`).join('')}</select></div></div>
     <div class="ft"><a ${h(closeM)}>Cancel</a><button class="btn pri" ${h(()=>{const p=$('crp').value.trim(); if(!p) return toast('Say what does not work so the next person can act on it');
       const c=addCR({about:o.about,problem:esc(p),ask:esc($('cra').value.trim()),to:$('crt').value,site:o.site,sug:o.sug}); if(o.ret) S.ret=c.id; if(o.after) o.after(c); closeM(); toast(`${c.id} sent to ${c.to}`);})}>Send request</button></div></div></div>`;
   $('crp').focus(); return false; }
