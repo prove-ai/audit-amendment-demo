@@ -1,4 +1,4 @@
-/* PAMIS – concept demo. All study-conduct data (sites, people, subjects, dates, rule names) is invented.
+/* RELAY – concept demo. All study-conduct data (sites, people, subjects, dates, rule names) is invented.
    Protocol facts (visit schedule, PK subgroup scope, sampling windows) are taken from the public protocol PDF in assets/. */
 
 /* ================= Data ================= */
@@ -158,9 +158,9 @@ function log(x,sid,who,ref){const m=who||me(); S.log.unshift({t:now(),u:m.n,o:m.
   SITES.filter(s=>s.irb).reverse().forEach(s=>add(s.irb+' 09:00','EC approval of Protocol Ver. 1.1 recorded',s.id,{n:s.cra,o:'CRO'}));
   SITES.filter(s=>!s.irb).forEach(s=>add(s.sub+' 14:10','Protocol Ver. 1.1 submitted to EC',s.id,{n:s.coord,o:'Site '+s.id}));
   S.log.push({t:'18 May 2017 08:06',u:'System',o:'Vault',s:'',x:'Site impact calculated from participant study days: counts per site (AI-06)'});
-  S.log.push({t:'18 May 2017 08:04',u:'PAMIS assistant',o:'AI',s:'',ref:{p:44},x:'Drafted four schema options (A to D) with pros, cons and a recommendation (AI-02). Draft only: nothing changes until a person decides'});
-  S.log.push({t:'18 May 2017 08:02',u:'PAMIS assistant',o:'AI',s:'',ref:{p:44},x:'Read Protocol Ver. 1.1 and compared it with casebook version 1: 7 new PK samples found, 1 point left for a person to decide (AI-01)'});
-  if(0) add('','PAMIS compared Protocol Ver. 1.1 with casebook version 1 and drafted 11 suggested changes');
+  S.log.push({t:'18 May 2017 08:04',u:'RELAY assistant',o:'AI',s:'',ref:{p:44},x:'Drafted four schema options (A to D) with pros, cons and a recommendation (AI-02). Draft only: nothing changes until a person decides'});
+  S.log.push({t:'18 May 2017 08:02',u:'RELAY assistant',o:'AI',s:'',ref:{p:44},x:'Read Protocol Ver. 1.1 and compared it with casebook version 1: 7 new PK samples found, 1 point left for a person to decide (AI-01)'});
+  if(0) add('','RELAY compared Protocol Ver. 1.1 with casebook version 1 and drafted 11 suggested changes');
   add('18 May 2017 08:00','Protocol CTJ301UC201 Ver. 1.1 filed (VV-TMF-00412)','',{n:'Elena Marsh',o:'Sponsor'});
   add('06 Mar 2017 11:20','Casebook version 1 deployed to all sites','',{n:'Jordan Morgan',o:'CRO'});
 })();
@@ -290,7 +290,7 @@ function chrome(body){
 }
 function side(){
   const r=S.role, p=S.pg[r], it=(l,pg,extra='')=>`<div class="it ${pg?(p===pg||(pg==='rollout'&&p==='site')?'on':''):'off'}" ${pg?go(r,pg):''}>${l}${extra}</div>`;
-  if(r==='sponsor') return `<aside><h4>Study Design</h4>${it('Schedule','schedule')}${it(`PAMIS (${SUG.length-reviewed()})`,'assist')}${it(`AI Record${trustNums().wait?' ('+trustNums().wait+' waiting)':''}`,'trust')}${it('Compare Versions','compare')}${it(`Change Requests (${openCR()})`,'feedback')}${it('Settings','settings')}${it('Review Plans (4)','plans')}
+  if(r==='sponsor') return `<aside><h4>Study Design</h4>${it('Schedule','schedule')}${it(`RELAY (${SUG.length-reviewed()})`,'assist')}${it(`AI Record${trustNums().wait?' ('+trustNums().wait+' waiting)':''}`,'trust')}${it('Compare Versions','compare')}${it(`Change Requests (${openCR()})`,'feedback')}${it('Settings','settings')}${it('Review Plans (4)','plans')}
     <hr><h4>Study Objects</h4>${it('Event Groups (4)','groups')}${it(`Events (${11+EV.filter(e=>e.sug&&acc(e.sug)).length})`,'events')}${it('Forms (18)','forms')}${it('Codelists (42)','codelists')}
     <hr><h4>Rules</h4>${it('Comparison Rules (7)','crules')}${it(`User Defined Rules (${39+SUG.filter(s=>acc(s.id)&&s.diff.some(d=>d[0]==='Rule'&&d[2]==='Added')).length})`,'urules')}
     <hr><h4>Reference</h4>${it('Protocol Ver. 1.1','protocol')}${it('Audit Trail','audit')}</aside>`;
@@ -392,7 +392,7 @@ function rejectModal(s){ $('layer').innerHTML=`<div class="ovl"><div class="moda
   <div class="fld"><label>Why does this change not work? (recorded in the audit trail)</label><textarea id="rn" class="req" rows="2" placeholder="e.g. Monitoring plan already defines SDV scope; this would duplicate it."></textarea></div>
   <div class="fld"><label>What should be changed or tried instead? (optional; raises a change request)</label><textarea id="rt" rows="2" placeholder="e.g. Limit SDV to the 48 h samples."></textarea></div></div>
   <div class="ft"><a ${h(closeM)}>Cancel</a><button class="btn pri" ${h(()=>{const v=$('rn').value.trim(); if(!v) return toast('A note is required when rejecting a change');
-    const t=$('rt').value.trim(); S.dec[s.id]='rejected'; S.why[s.id]=$('rr').value+': '+esc(v)+(t?' <b>Try instead:</b> '+esc(t):''); S.val=null; log(`${s.id} rejected. ${$('rr').value}: ${v}`,'',null,{sug:s.id}); if(t) addCR({about:s.id+' · '+s.title,problem:esc(v),ask:esc(t),to:'PAMIS: redraft with this feedback',sug:s.id}); closeM(); const nx=SUG.find(x=>S.dec[x.id]==='pending'); if(nx) S.sel=nx.id;})}>Reject change</button></div></div></div>`; $('rn').focus(); return false; }
+    const t=$('rt').value.trim(); S.dec[s.id]='rejected'; S.why[s.id]=$('rr').value+': '+esc(v)+(t?' <b>Try instead:</b> '+esc(t):''); S.val=null; log(`${s.id} rejected. ${$('rr').value}: ${v}`,'',null,{sug:s.id}); if(t) addCR({about:s.id+' · '+s.title,problem:esc(v),ask:esc(t),to:'RELAY: redraft with this feedback',sug:s.id}); closeM(); const nx=SUG.find(x=>S.dec[x.id]==='pending'); if(nx) S.sel=nx.id;})}>Reject change</button></div></div></div>`; $('rn').focus(); return false; }
 function ecModal(s){ $('layer').innerHTML=`<div class="ovl"><div class="modal"><h2>Record EC Approval · ${s.id}</h2><div class="bd"><p style="margin-top:0">Protocol Ver. 1.1 was submitted to the EC on ${s.sub}. Recording the approval makes the site eligible for casebook version 2.</p>
   <div class="fld"><label>EC approval date</label><input id="ecd" type="date" class="req" value="2017-06-16"></div><div class="fld"><label>Approval letter (optional)</label><input type="file"></div></div>
   <div class="ft"><a ${h(closeM)}>Cancel</a><button class="btn pri" ${h(()=>{ if(!$('ecd').value) return toast('Enter the approval date'); s.irb=fd(new Date($('ecd').value+'T00:00')); S.pick[s.id]=true; log(`EC approval of Protocol Ver. 1.1 recorded (${s.irb}); site is now eligible for version 2`,s.id); closeM(); })}>Record approval</button></div></div></div>`; return false; }
@@ -406,7 +406,7 @@ function fastSponsor(){ if(!S.design) applyDesign('A',true); S.ret=null; SUG.for
   S.signed={by:'Elena Marsh',at:now(),meaning:'Approval'}; log('Casebook version 2 approved by electronic signature (Approval)','',m); }
 function vAssist(){
   const s=sug(S.sel), d=S.dec[s.id], hi=SUG.filter(x=>x.conf==='high'&&S.dec[x.id]==='pending').length, lock=!!S.signed, all=reviewed()===SUG.length;
-  const head=`<div class="ph"><div><h1>PAMIS</h1><div class="sub">Protocol Ver. 1.1 compared with casebook version 1 · ${SUG.length} suggested changes</div></div>
+  const head=`<div class="ph"><div><h1>RELAY</h1><div class="sub">Protocol Ver. 1.1 compared with casebook version 1 · ${SUG.length} suggested changes</div></div>
     ${lock?'<span class="pill solid">CASEBOOK V2 APPROVED</span>':'<span class="pill blue">IN REVIEW</span>'}
     <div class="acts"><button class="btn" ${h(()=>openPdf(44))}>View Protocol</button>${lock?'':`<button class="btn pri" ${h(()=>{S.sTab='approve'})}>Approve Casebook v2…</button>`}</div></div>
     ${S.ret?`<div class="note" style="background:var(--red-soft);border-color:#eab8b0">${icon('bad')}<div><b>Returned for rework (${S.ret}).</b> ${(S.cr.find(c=>c.id===S.ret)||{}).problem||''} Approval is blocked until the request is resolved. <a ${go('sponsor','feedback')}>Open change requests</a></div></div>`:''}
@@ -435,7 +435,7 @@ function vAssist(){
     <div class="card" style="margin-top:14px"><h2>Checked, no change proposed</h2><div class="bd"><ul class="clean">${NOCHANGE.map(n=>`<li>${icon('ok')}<div><b>${n[0]}</b><br><span class="muted">${n[1]}</span></div></li>`).join('')}</ul></div></div>
   </div>
   <div class="card detail"><h2>${s.id} ${confPill(s.conf)} <span class="dstat ${d}" style="margin-left:auto">${decTxt(d)}</span></h2><div class="bd">
-    <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type} · <span class="assist">Suggested by PAMIS</span></div>
+    <h3>${s.title}</h3><div class="muted">${s.cat} · ${s.type} · <span class="assist">Suggested by RELAY</span></div>
     <div class="sec"><label>Proposed change</label><div class="ba"><div><small>Casebook v1 (current)</small>${s.before}</div><i>→</i><div class="after"><small>Casebook v2 (proposed)</small>${s.after}</div></div>${s.rule?`<pre class="rule">${s.rule}</pre>`:''}</div>
     <div class="sec"><label>Protocol evidence</label>${evidence(s)}</div>
     <div class="sec"><label>Why this is suggested</label>${s.why}</div>${trustBrief(s)}${who}${opts}
@@ -626,7 +626,7 @@ function openStudies(){ const g=CTG.study;
     ${CTG.others.map(o=>`<tr><td class="nw"><b>${o.num}</b><div class="muted" style="font-size:12px">${o.nct}</div></td><td>${o.brief}</td><td>${o.sponsor}</td><td>${o.status}</td><td class="r">${o.enroll}</td><td class="r">${o.sites}</td><td class="r">${o.countries}</td><td class="nw"><span class="muted">None open</span> · <a href="https://clinicaltrials.gov/study/${o.nct}" target="_blank">registry</a></td></tr>`).join('')}</table>
     <p class="muted" style="margin-bottom:0">Only ${g.num} is loaded with a casebook in this demo. The other rows are real phase 2 ulcerative colitis studies listed for context.</p></div></div></div>`; return false; }
 
-const BRAND=n=>`<span class="brand" style="font-size:${n}px" aria-label="PAMIS">P<svg width="${(n*0.84).toFixed(1)}" height="${(n*0.8).toFixed(1)}" viewBox="0 1.5 20 18" aria-hidden="true"><path d="M1 2h5l4 10 4-10h5L12 19H8z" fill="#f5921b" transform="rotate(180 10 10.5)"/></svg>MIS</span>`;
+const BRAND=n=>`<span class="brand" style="font-size:${n}px" aria-label="RELAY">RELA<svg width="${(n*0.78).toFixed(1)}" height="${(n*0.86).toFixed(1)}" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 14.5V21" stroke="currentColor" stroke-width="3.4" fill="none"/><path d="M2.5 7.5l7.5 7L18.5 1.5" stroke="#f5921b" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
 const toSignIn=(role,mode)=>h(()=>{ if(role) S.auth.role=role; if(mode) S.auth.mode=mode; S.auth.email=''; S.home='signin'; window.scrollTo(0,0); });
 const scrollTo=id=>`onclick="document.getElementById('${id}').scrollIntoView({behavior:'smooth'})"`;
 function vSignIn(){ const a=S.auth, d=demoAcct(a.role);

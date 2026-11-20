@@ -1,4 +1,4 @@
-/* PAMIS – feature modules: dates, site tasks, messages, Data Entry preview with live rules,
+/* RELAY – feature modules: dates, site tasks, messages, Data Entry preview with live rules,
    study-object browser, audit chain + export, inspection packet, guided walkthrough. Loaded after app.js. */
 
 /* ================= Dates ================= */
@@ -130,13 +130,13 @@ const OBJ={
   settings:{t:'Settings',h:['Setting','Value','Relevant to this amendment'],rows:()=>[[['Standard Date Format','dd-MMM-yyyy',''],null],[['Open Query on Out of Range Event Dates','Yes','New events with a day window raise this query automatically'],rid('winDay')],[['Enable Protocol Deviations','Yes',''],null],[['Enable Veeva Randomization','Yes','PK subgroup is assigned at randomisation (RAND.PKSUB)'],rid('scope')]]},
 };
 function vObjects(k){ const o=OBJ[k];
-  return `<div class="ph"><div><h1>${o.t}</h1><div class="sub">Version 1 objects with the changes proposed for version 2. Rows linked to a suggested change open it.</div></div><div class="acts"><button class="btn" ${go('sponsor','assist',{sTab:'changes'})}>Open PAMIS</button></div></div>
+  return `<div class="ph"><div><h1>${o.t}</h1><div class="sub">Version 1 objects with the changes proposed for version 2. Rows linked to a suggested change open it.</div></div><div class="acts"><button class="btn" ${go('sponsor','assist',{sTab:'changes'})}>Open RELAY</button></div></div>
   ${o.note?`<div class="note blue"><div>${o.note}</div></div>`:''}
   <table class="v"><tr>${o.h.map(x=>`<th>${x}</th>`).join('')}<th>Suggested change</th></tr>${o.rows().map(r=>`<tr class="${r[1]?'click':''}" ${r[1]?go('sponsor','assist',{sTab:'changes',sel:r[1]}):''}>${r[0].map(c=>`<td>${c}</td>`).join('')}<td class="nw">${r[1]?`<a>${r[1]}</a>`:'<span class="muted">—</span>'}</td></tr>`).join('')}</table>`; }
 const vCountries=()=>`<div class="ph"><h1>Study Countries</h1></div><table class="v"><tr><th>Country</th><th>Sites</th><th>EC approved Ver. 1.1</th><th>On version 2</th><th>PK subgroup</th></tr>
   ${[...new Set(SITES.map(s=>s.ctry))].map(c=>{const l=SITES.filter(s=>s.ctry===c);return `<tr><td><b>${c}</b></td><td>${l.map(s=>`<a ${go('cro','site',{croSite:s.id,siteTab:'overview'})}>${s.id}</a>`).join(', ')}</td><td>${l.filter(s=>s.irb).length} of ${l.length}</td><td>${l.filter(s=>S.dep[s.id]).length} of ${l.length}</td><td>${l[0].cn?'Yes – new PK visits apply':'No – data entry unchanged'}</td></tr>`}).join('')}</table>`;
 
-/* ================= PAMIS: chain, filters, export ================= */
+/* ================= RELAY: chain, filters, export ================= */
 const fnv=s=>{let a=0x811c9dc5,b=0x1000193;for(let i=0;i<s.length;i++){a^=s.charCodeAt(i);a=Math.imul(a,16777619)>>>0;b=(Math.imul(b^s.charCodeAt(i),2246822519))>>>0;}return (a.toString(16).padStart(8,'0')+b.toString(16).padStart(8,'0'));};
 function chain(){ let prev='0'.repeat(16); const l=S.log.slice().reverse(); l.forEach((e,i)=>{e.seq=i+1;e.hash=fnv(prev+e.t+e.u+e.o+e.s+e.x);prev=e.hash;}); return l.reverse(); }
 const STAGES=[['src','Protocol','The amended protocol is filed. Everything after it has to trace back to this document.'],
@@ -232,7 +232,7 @@ const TOUR=[
   ['Detailed changes for Option A. Here the assistant found the PK-subgroup restriction in a footnote. Click “Open protocol at p. 45” to check the source yourself.',()=>{needA();nav('sponsor','assist',{sTab:'changes',sel:r1('scope')});}],
   ['Table 1 and Section 6.2.5 disagree. The assistant does not guess; pick an option, then Accept. Reject… asks why and what to try instead.',()=>{needA();nav('sponsor','assist',{sTab:'changes',sel:r1('winGap')});}],
   ['AI Record: every automated step across sponsor, CRO and site, labelled as an AI draft or a fixed-rule calculation, with what it was based on, how it was checked and which person reviewed it. Click any row for the full record.',()=>{needA();nav('sponsor','trust');}],
-  ['Schedule: the current version beside each proposed one, with what speaks for and against it. Type a doubt into Ask PAMIS at the bottom.',()=>nav('sponsor','schedule',{view:'v2'})],
+  ['Schedule: the current version beside each proposed one, with what speaks for and against it. Type a doubt into Ask RELAY at the bottom.',()=>nav('sponsor','schedule',{view:'v2'})],
   ['Accept the rest (“Accept all high-confidence”), run validation, then Approve and Sign, or Reject and return with a reason.',()=>{needA();nav('sponsor','assist',{sTab:'approve'});}],
   ['CRO: the study’s 27 real sites. Most are ready; three are held until their EC approves. Tick sites and Set Active Version, record an EC approval, or return the casebook to the sponsor.',()=>nav('cro','rollout')],
   ['Open a site: per-subject impact with visit timelines, readiness tasks, documents, contacts, messages and its own audit trail.',()=>nav('cro','site',{croSite:'CN-101',siteTab:'subjects'})],
