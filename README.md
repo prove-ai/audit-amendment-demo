@@ -1,4 +1,4 @@
-# Audit – protocol amendment demo
+# PSYNC – protocol amendment demo
 
 A clickable concept demo of a product that sits on top of Veeva systems and carries a protocol amendment through to a signed-off EDC schema update, from three perspectives:
 
